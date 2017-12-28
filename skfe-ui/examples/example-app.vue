@@ -16,13 +16,13 @@
     </div>
 </template>
 <script>
-    import RandomTimeGrid from './views/random-time-grid.vue'
+  import RandomTimeGrid from './views/random-time-grid.vue'
 
-    export default {
-        data: () => ({}),
-        created() {
+  export default {
+    data: () => ({}),
+    created () {
 
-        },
-        components: {RandomTimeGrid}
-    }
+    },
+    components: {RandomTimeGrid}
+  }
 </script>

@@ -8,7 +8,7 @@ function toErrInfo (resp2, actionName = '操作') {
   // console.log(resp2, actionName)
   let st0 = resp2.status || (resp2.data ? resp2.data.status : '')
   let st1 = st0 ? '[' + st0 + ']' : ''
-  let err1 = resp2.data && resp2.data.error || ''
+  let err1 = (resp2.data && resp2.data.error) || ''
   let bd1 = resp2.data ? (resp2.data.message || '') + (resp2.data.debugInfo || '') : null
   return {
     title: `${actionName}失败: ${st1} ${err1}`,

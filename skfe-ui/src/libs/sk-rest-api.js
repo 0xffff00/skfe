@@ -18,84 +18,82 @@ import axois from 'axios'
  *        }
  */
 class SkeanRestApi {
-
-    constructor(pluralUrl, singularPart = '') {
-        this.pluralUrl = pluralUrl
-        this.$axois = axois.create({baseURL: pluralUrl, validateStatus: st => true})
-        if (typeof singularPart === 'string') {
-            this.singularUrlBuilder = (params) => {
-                if (!singularPart) return ''
-                let u = singularPart
-                if (params) {
-                    Object.keys(params).forEach(key => {
-                        u = u.replace('{' + key + '}', params[key])
-                    })
-                }
-                return u
-            }
-        } else if (typeof singularPart === 'function') {
-            this.singularUrlBuilder = singularPart
-        } else {
-            throw new Error('Api has illegal singularPartTemplate')
+  constructor (pluralUrl, singularPart = '') {
+    this.pluralUrl = pluralUrl
+    this.$axois = axois.create({baseURL: pluralUrl, validateStatus: st => true})
+    if (typeof singularPart === 'string') {
+      this.singularUrlBuilder = (params) => {
+        if (!singularPart) return ''
+        let u = singularPart
+        if (params) {
+          Object.keys(params).forEach(key => {
+            u = u.replace('{' + key + '}', params[key])
+          })
         }
+        return u
+      }
+    } else if (typeof singularPart === 'function') {
+      this.singularUrlBuilder = singularPart
+    } else {
+      throw new Error('Api has illegal singularPartTemplate')
     }
+  }
 
-    /**
-     * get a list of part and count of all by http GET request
-     * @param params
-     * @return {function}
-     */
-    gettingSome(params) {
-        return callback =>
-            this.$axois.get(toQVarStr(params)).then(respond(callback))
-    }
+  /**
+   * get a list of part and count of all by http GET request
+   * @param params
+   * @return {function}
+   */
+  gettingSome (params) {
+    return callback =>
+      this.$axois.get(toQVarStr(params)).then(respond(callback))
+  }
 
-    /**
-     * get single item
-     * @param params
-     * @return {function}
-     */
-    getting(params) {
-        return callback =>
-            this.$axois.get(this.singularUrlBuilder(params)).then(respond(callback))
-    }
+  /**
+   * get single item
+   * @param params
+   * @return {function}
+   */
+  getting (params) {
+    return callback =>
+      this.$axois.get(this.singularUrlBuilder(params)).then(respond(callback))
+  }
 
-    deleting(params) {
-        return callback =>
-            this.$axois.delete(this.singularUrlBuilder(params)).then(respond(callback))
-    }
+  deleting (params) {
+    return callback =>
+      this.$axois.delete(this.singularUrlBuilder(params)).then(respond(callback))
+  }
 
-    deletingSome(params) {
-        return callback =>
-            this.$axois.delete(toQVarStr(params)).then(respond(callback))
-    }
+  deletingSome (params) {
+    return callback =>
+      this.$axois.delete(toQVarStr(params)).then(respond(callback))
+  }
 
-    posting(params) {
-        return callback =>
-            this.$axois.post(null, params).then(respond(callback))
-    }
+  posting (params) {
+    return callback =>
+      this.$axois.post(null, params).then(respond(callback))
+  }
 
-    /**
-     *
-     * @param oldParams body in PUT request
-     * @param newParams uri-q-params in PUT request
-     */
-    putting(oldParams, newParams) {
-        return callback =>
-            this.$axois.put(this.singularUrlBuilder(params), newParams).then(respond(callback))
-    }
+  /**
+   *
+   * @param oldParams body in PUT request
+   * @param newParams uri-q-params in PUT request
+   */
+  putting (oldParams, newParams) {
+    return callback =>
+      this.$axois.put(this.singularUrlBuilder(oldParams), newParams).then(respond(callback))
+  }
 
-    /**
-     *
-     * @param oldParams body in PATCH request
-     * @param newParams uri-q-params in PATCH request
-     */
-    patching(oldParams, newParams) {
-        return callback =>
-            this.$axois.patch(this.singularUrlBuilder(params), newParams).then(respond(callback))
-    }
+  /**
+   *
+   * @param oldParams body in PATCH request
+   * @param newParams uri-q-params in PATCH request
+   */
+  patching (oldParams, newParams) {
+    return callback =>
+      this.$axois.patch(this.singularUrlBuilder(oldParams), newParams).then(respond(callback))
+  }
 }
-
 
 const isOk = st => st >= 200 && st < 300
 
@@ -107,28 +105,27 @@ const isOk = st => st >= 200 && st < 300
  * @param callback
  */
 const respond = callback => resp => {
-    let resp2 = {ok: 0, data: null}
-    if (resp) {
-        resp2.status = resp.status
-        resp2.ok = isOk(resp.status)
-        const totalAffected = parseInt(resp.headers.get('X-Total-Affected')) || null
-        const totalCount = parseInt(resp.headers.get('X-Total-Count')) || null
-        if (totalAffected) resp2.totalAffected = totalAffected
-        if (totalCount) resp2.totalCount = totalCount
-    }
-    callback(resp2)
+  let resp2 = {ok: 0, data: null}
+  if (resp) {
+    resp2.status = resp.status
+    resp2.ok = isOk(resp.status)
+    const totalAffected = parseInt(resp.headers.get('X-Total-Affected')) || null
+    const totalCount = parseInt(resp.headers.get('X-Total-Count')) || null
+    if (totalAffected) resp2.totalAffected = totalAffected
+    if (totalCount) resp2.totalCount = totalCount
+  }
+  callback(resp2)
 }
-
 
 /**
  * {a:1,b:'xx'} => ?a=1&b=xx
  * @param params
  */
-function toQVarStr(params) {
-    if (!params) return ''
-    const keys = Object.keys(params)
-    if (!keys.length) return ''
-    return '?' + keys.map(k => k + '=' + params[k]).join('&')
+function toQVarStr (params) {
+  if (!params) return ''
+  const keys = Object.keys(params)
+  if (!keys.length) return ''
+  return '?' + keys.map(k => k + '=' + params[k]).join('&')
 }
 
 /**
