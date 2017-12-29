@@ -6,10 +6,10 @@ import TableManRenders from './components/table-man-renders'
 import TimeGrid from './components/time-grid.vue'
 
 export {
-    MsgBox,
-    RestApi,
-    AsyncProcessBox,
-    TableMan,
-    TableManRenders,
-    TimeGrid
+  MsgBox,
+  RestApi,
+  AsyncProcessBox,
+  TableMan,
+  TableManRenders,
+  TimeGrid
 }

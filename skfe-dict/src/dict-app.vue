@@ -25,15 +25,13 @@
     </div>
 </template>
 <script>
-    import Random2TimeGrid from './views/random2-time-grid.vue'
+  import Random2TimeGrid from './views/random2-time-grid.vue'
 
-    export default {
-        data: () => ({
+  export default {
+    data: () => ({}),
+    created () {
 
-        }),
-        created() {
-
-        },
-        components: {Random2TimeGrid}
-    }
+    },
+    components: {Random2TimeGrid}
+  }
 </script>

@@ -82,6 +82,7 @@
         self.ui.visible = true
         self.failCnt = 0
         self.jobId = setInterval(self.refreshStatus, interval)
+        // eslint-disable-next-line
         console.info(`starting Heartbeat Job[id=${self.jobId}]...`)
         setTimeout(() => {
           self.stopHeartbeat()
@@ -89,6 +90,7 @@
       },
       stopHeartbeat () {
         const self = this
+        // eslint-disable-next-line
         console.info(`stopping Heartbeat Job[id=${self.jobId}]...`)
         clearInterval(self.jobId)
       },
@@ -100,6 +102,7 @@
             MsgBox.open(self, '获取任务进度')(resp2)
             self.failCnt++
             if (self.failCnt > self.heartbeatMaxFailTrials) {
+              // eslint-disable-next-line
               console.info(`fail heartbeat trails reached max value: ${self.heartbeatMaxFailTrials}`)
               self.stopHeartbeat()
             }

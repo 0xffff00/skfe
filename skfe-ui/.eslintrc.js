@@ -11,7 +11,7 @@ module.exports = {
     'extends': 'standard',
     'plugins': ['html'],
     'rules': {
-        'quotes': ['error', 'single'],
+        // 'quotes': ['error', 'single'],
         // "semi": ["error", "always"],
         'no-console': ['warn'],
         'no-unused-vars': 'off'
