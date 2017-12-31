@@ -6,9 +6,12 @@
             </router-link>
             <Submenu name="3">
                 <template slot="title">
-                    DICT
+                    DICT(DEV only)
                 </template>
                 <MenuGroup title="other1" mode="horizontal">
+                    <router-link to="/words/复旦大学/edit">
+                        <MenuItem name="3">复旦大学</MenuItem>
+                    </router-link>
                     <MenuItem name="3">dict1</MenuItem>
                     <MenuItem name="4">流vccc</MenuItem>
                 </MenuGroup>
