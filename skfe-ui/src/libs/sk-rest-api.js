@@ -109,8 +109,9 @@ const respond = callback => resp => {
   if (resp) {
     resp2.status = resp.status
     resp2.ok = isOk(resp.status)
-    const totalAffected = parseInt(resp.headers.get('X-Total-Affected')) || null
-    const totalCount = parseInt(resp.headers.get('X-Total-Count')) || null
+    resp2.data = resp.data
+    const totalAffected = parseInt(resp.headers['X-Total-Affected']) || null
+    const totalCount = parseInt(resp.headers['X-Total-Count']) || null
     if (totalAffected) resp2.totalAffected = totalAffected
     if (totalCount) resp2.totalCount = totalCount
   }

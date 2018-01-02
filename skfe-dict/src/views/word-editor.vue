@@ -1,87 +1,87 @@
 <template>
-  <div id="word-editor">
-    <h1>{{word.text}} - 编辑中
-      <a :href="linkV(word.text)">
-        <Button type="info" shape="circle" size="small">预览</Button>
-      </a>
-      <ButtonGroup shape="circle" size="small">
-        <Button type="ghost" icon="ios-refresh" @click="loadItem()">刷新</Button>
-        <Button type="ghost" icon="ios-plus-empty" @click="">保存</Button>
-        <Button type="error" icon="trash-a" disabled>删除</Button>
-      </ButtonGroup>
-    </h1>
-    <h2>描述</h2>
-    <div>
-      <Input v-model="word.desc" type="textarea" :rows="4" placeholder="描述"/>
-    </div>
-    <h2>别名({{word.aliasRS0.length}})</h2>
-    <div id="alias">
-      <Tag closable v-for="r in word.aliasRS0" :key="r.no" @on-close="delBR(r,'别名')">
-        <a :href="link(r.dst)">{{r.dst}}</a>
-      </Tag>
-      <Input name="ALIA-f" class="adder" size="small" placeholder="添加新别名" @on-enter="addBR"/>
-    </div>
-    <h2>定义与实例</h2>
-    <div id="def-and-inst">
-      <h3>直接类型({{definitionRS0.length}})</h3>
-      <Tag closable v-for="r in definitionRS0" :key="r.no" @on-close="delBR(r,'类型')">
-        <a :href="link(r.src)">{{r.src}}</a>
-      </Tag>
-      <Input name="INST-b" class="adder" size="small" placeholder="关联新类型" @on-enter="addBR"/>
-      <h3>所有超类({{definitionESA.length}})</h3>
-      <Tag v-for="e in definitionESA" :key="e"><a :href="link(e)">{{e}}</a></Tag>
+    <div id="word-editor">
+        <h1>{{word.text}} - 编辑中
+            <a :href="linkV(word.text)">
+                <Button type="info" shape="circle" size="small">预览</Button>
+            </a>
+            <ButtonGroup shape="circle" size="small">
+                <Button type="ghost" icon="ios-refresh" @click="loadItem()">刷新</Button>
+                <Button type="ghost" icon="ios-plus-empty" @click="">保存</Button>
+                <Button type="error" icon="trash-a" disabled>删除</Button>
+            </ButtonGroup>
+        </h1>
+        <h2>描述</h2>
+        <div>
+            <Input v-model="word.desc" type="textarea" :rows="4" placeholder="描述"/>
+        </div>
+        <h2>别名({{word.aliasRS0.length}})</h2>
+        <div id="alias">
+            <Tag closable v-for="r in word.aliasRS0" :key="r.no" @on-close="delBR(r,'别名')">
+                <a :href="link(r.dst)">{{r.dst}}</a>
+            </Tag>
+            <Input name="ALIA-f" class="adder" size="small" placeholder="添加新别名" @on-enter="addBR"/>
+        </div>
+        <h2>定义与实例</h2>
+        <div id="def-and-inst">
+            <h3>直接类型({{definitionRS0.length}})</h3>
+            <Tag closable v-for="r in definitionRS0" :key="r.no" @on-close="delBR(r,'类型')">
+                <a :href="link(r.src)">{{r.src}}</a>
+            </Tag>
+            <Input name="INST-b" class="adder" size="small" placeholder="关联新类型" @on-enter="addBR"/>
+            <h3>所有超类({{definitionESA.length}})</h3>
+            <Tag v-for="e in definitionESA" :key="e"><a :href="link(e)">{{e}}</a></Tag>
 
 
-      <h3>直接实例({{instanceRS0.length}})</h3>
-      <Tag closable v-for="r in instanceRS0" :key="r.no" @on-close="delBR(r,'实例')">
-        <a :href="link(r.dst)">{{r.dst}}</a>
-      </Tag>
-      <Input name="INST-f" class="adder" size="small" placeholder="关联新实例" @on-enter="addBR"/>
-      <h3>所有实例({{instanceESA.length}})</h3>
-      <Tag v-for="e in instanceESA" :key="e"><a :href="link(e)">{{e}}</a></Tag>
-    </div>
+            <h3>直接实例({{instanceRS0.length}})</h3>
+            <Tag closable v-for="r in instanceRS0" :key="r.no" @on-close="delBR(r,'实例')">
+                <a :href="link(r.dst)">{{r.dst}}</a>
+            </Tag>
+            <Input name="INST-f" class="adder" size="small" placeholder="关联新实例" @on-enter="addBR"/>
+            <h3>所有实例({{instanceESA.length}})</h3>
+            <Tag v-for="e in instanceESA" :key="e"><a :href="link(e)">{{e}}</a></Tag>
+        </div>
 
-    <h2>集合</h2>
-    <div id="subset-and-superset">
-      <h3>直接子集({{subsetRS0.length}})</h3>
-      <Tag closable v-for="r in subsetRS0" :key="r.no" @on-close="delBR(r,'子集')">
-        <a :href="link(r.dst)">{{r.dst}}</a>
-      </Tag>
-      <Input name="SUBS-f" class="adder" size="small" placeholder="关联新子集" @on-enter="addBR"/>
+        <h2>集合</h2>
+        <div id="subset-and-superset">
+            <h3>直接子集({{subsetRS0.length}})</h3>
+            <Tag closable v-for="r in subsetRS0" :key="r.no" @on-close="delBR(r,'子集')">
+                <a :href="link(r.dst)">{{r.dst}}</a>
+            </Tag>
+            <Input name="SUBS-f" class="adder" size="small" placeholder="关联新子集" @on-enter="addBR"/>
 
-      <h3>所有子集({{subsetESR.length}})</h3>
-      <Tag v-for="e in subsetESR" :key="e"><a :href="link(e)">{{e}}</a></Tag>
-      <h3>直接超集({{supersetRS0.length}})</h3>
-      <Tag closable v-for="r in supersetRS0" :key="r.no" @on-close="delBR(r,'超集')">
-        <a :href="link(r.src)">{{r.src}}</a>
-      </Tag>
-      <Input name="SUBS-b" class="adder" size="small" placeholder="关联新超集" @on-enter="addBR"/>
-      <h3>所有超集({{supersetESR.length}})</h3>
-      <Tag v-for="e in supersetESR" :key="e"><a :href="link(e)">{{e}}</a></Tag>
-    </div>
+            <h3>所有子集({{subsetESR.length}})</h3>
+            <Tag v-for="e in subsetESR" :key="e"><a :href="link(e)">{{e}}</a></Tag>
+            <h3>直接超集({{supersetRS0.length}})</h3>
+            <Tag closable v-for="r in supersetRS0" :key="r.no" @on-close="delBR(r,'超集')">
+                <a :href="link(r.src)">{{r.src}}</a>
+            </Tag>
+            <Input name="SUBS-b" class="adder" size="small" placeholder="关联新超集" @on-enter="addBR"/>
+            <h3>所有超集({{supersetESR.length}})</h3>
+            <Tag v-for="e in supersetESR" :key="e"><a :href="link(e)">{{e}}</a></Tag>
+        </div>
 
-    <h2>相关话题</h2>
-    <div id="subtopic-and-supertopic">
-      <h3>直接子话题</h3>
-      <Tag closable v-for="r in subtopicRS0" :key="r.no" @on-close="delBR(r,'子话题')">
-        <a :href="link(r.dst)">{{r.dst}}</a>
-      </Tag>
-      <Input name="SUBT-f" class="adder" size="small" placeholder="关联新子话题" @on-enter="addBR"/>
-      <h3>所有子话题</h3>
-      <Tag v-for="e in subtopicESR" :key="e"><a :href="link(e)">{{e}}</a></Tag>
-      <h3>直接父话题</h3>
-      <Tag closable v-for="r in supertopicRS0" :key="r.no" @on-close="delBR(r,'父话题')">
-        <a :href="link(r.src)">{{r.src}}</a></Tag>
-      <Input name="SUBT-b" class="adder" size="small" placeholder="关联新父话题" @on-enter="addBR"/>
-      <h3>所有父话题</h3>
-      <Tag v-for="e in supertopicESR" :key="e"><a :href="link(e)">{{e}}</a></Tag>
-    </div>
+        <h2>相关话题</h2>
+        <div id="subtopic-and-supertopic">
+            <h3>直接子话题</h3>
+            <Tag closable v-for="r in subtopicRS0" :key="r.no" @on-close="delBR(r,'子话题')">
+                <a :href="link(r.dst)">{{r.dst}}</a>
+            </Tag>
+            <Input name="SUBT-f" class="adder" size="small" placeholder="关联新子话题" @on-enter="addBR"/>
+            <h3>所有子话题</h3>
+            <Tag v-for="e in subtopicESR" :key="e"><a :href="link(e)">{{e}}</a></Tag>
+            <h3>直接父话题</h3>
+            <Tag closable v-for="r in supertopicRS0" :key="r.no" @on-close="delBR(r,'父话题')">
+                <a :href="link(r.src)">{{r.src}}</a></Tag>
+            <Input name="SUBT-b" class="adder" size="small" placeholder="关联新父话题" @on-enter="addBR"/>
+            <h3>所有父话题</h3>
+            <Tag v-for="e in supertopicESR" :key="e"><a :href="link(e)">{{e}}</a></Tag>
+        </div>
 
-    <h2>其他属性和引用</h2>
-    <div id="x1-rels">
-      <h3>属性</h3>
-      <ul>
-        <li v-for="(rels,attrVO) in attributeRMG">
+        <h2>其他属性和引用</h2>
+        <div id="x1-rels">
+            <h3>属性</h3>
+            <ul>
+                <li v-for="(rels,attrVO) in attributeRMG">
           <span class="x1rmg">
           <Button shape="circle" type="error" icon="close" class="btn-del" @click="delX1Rs(rels)"
                   size="small"></Button>
@@ -92,9 +92,9 @@
             <Input class="adder" size="small" placeholder="关联新属性值" @on-enter="addX1RtoLast(rels,$event)"/>
             </span>
 
-        </li>
+                </li>
 
-        <li>
+                <li>
           <span class="x1rmg x1rmg-add">
             <Icon type="plus-round" class="icon-add"></Icon>
           <Input v-model="editor.x1RelToAdd.attr" placeholder="属性名" size="small" style="width:140px;"/>
@@ -107,17 +107,17 @@
                  @on-enter="addX1R" style="width:280px;"/>
         </span>
 
-        </li>
+                </li>
 
-      </ul>
+            </ul>
 
 
-      <h3>引用</h3>
-      <ul>
-        <li v-for="r in word.referenceRS0">
-          <a :href="link(r.src)">{{r.src}}</a> 的 {{r.attr}} {{pred2str(r.pred)}} {{r.dst}}
-        </li>
-        <li>
+            <h3>引用</h3>
+            <ul>
+                <li v-for="r in word.referenceRS0">
+                    <a :href="link(r.src)">{{r.src}}</a> 的 {{r.attr}} {{pred2str(r.pred)}} {{r.dst}}
+                </li>
+                <li>
           <span class="x1rmg x1rmg-add">
              <Icon type="plus-round" class="icon-add"></Icon>
              <Input v-model="editor.x1RelToAdd2.src" placeholder="主语，若填多个以空格隔开" size="small"
@@ -132,20 +132,19 @@
 
         </span>
 
-        </li>
-      </ul>
-    </div>
+                </li>
+            </ul>
+        </div>
 
-  </div>
+    </div>
 
 </template>
 
 <script>
   import _ from 'lodash'
-  import DAGVisitor from '../utils/DAGVisitor'
-  import Objects from '../utils/Objects'
+  import DAGVisitor from '../libs/dag-visitor'
   import DictApi from '../apis/DictApi'
-  import MsgBox from '../components/MsgBox'
+  import { MsgBox, RestApi } from 'skfe-ui'
 
   /**
    * ---Coding Naming Conventions---
@@ -265,10 +264,10 @@
 
       // ----- temp ------
       attributeRMG: function () {
-        return Objects.sortObject(_.mapValues(
+        return _.mapValues(
           _.groupBy(this.word.attributeRS0, this.rel2attr),
           rels => _.sortBy(rels, ['attr', 'attrx', 'no'])
-        ))
+        )
       }
 
     },
@@ -298,13 +297,13 @@
           ? {src: w, dst: v, attr: attr}
           : {src: v, dst: w, attr: attr}
         event.target.value = null
-        DictApi.basicRelations.httpPost(rel)(this.notify(actionName))
+        DictApi.basicRelations.posting(rel)(this.notify(actionName))
       },
       /**
        * delete a basic relation
        */
       delBR (rel, attrName) {
-        DictApi.basicRelations.httpDelete(rel)(this.notify('移除' + attrName))
+        DictApi.basicRelations.deleting(rel)(this.notify('移除' + attrName))
       },
 
       addX1RtoLast (siblingES, event) {
@@ -312,7 +311,7 @@
         let v = event.target.value
         let w = this.word.text
         let rel = {src: w, attr: lastRel.attr, attrx: lastRel.attrx, pred: lastRel.pred, dst: v}
-        DictApi.x1Relations.httpPost(rel)(this.notify('添加属性'))
+        DictApi.x1Relations.posting(rel)(this.notify('添加属性'))
       },
 
       addX1R () {
@@ -324,7 +323,7 @@
         DictApi.x1Relations.batchCreate(this.editor.x1RelToAdd2)(this.notify('添加引用'))
       },
       delX1R (rel) {
-        DictApi.x1Relations.httpDelete(rel)(this.notify('移除属性'))
+        DictApi.x1Relations.deleting(rel)(this.notify('移除属性'))
       },
       // delete X1R by example's (src,attr,attrx)
       delX1Rs (exampleRels) {
@@ -334,7 +333,7 @@
           this.$notify.error({title: '无法批量删除', message: '条件缺失:' + JSON.stringify(r1), duration: 0})
           return
         }
-        DictApi.x1Relations.httpDeleteSome(r1)(this.notify('移除属性'))
+        DictApi.x1Relations.deletingSome(r1)(this.notify('移除属性'))
       },
 
       // ------------ misc ---------------
@@ -354,7 +353,8 @@
         if (!w) {
           return
         }
-        DictApi.words.httpGet(this.word)(resp2 => {
+        DictApi.words.getting(this.word)(resp2 => {
+          console.log('ax4', resp2)
           if (!resp2.ok) {
             MsgBox.open(self, '加载')
             return
@@ -380,73 +380,73 @@
   }
 </script>
 <style>
-  #word-editor a {
-    text-decoration: none;
-    color: inherit;
-  }
+    #word-editor a {
+        text-decoration: none;
+        color: inherit;
+    }
 
-  #word-editor .adder {
-    width: 10em;
-  }
+    #word-editor .adder {
+        width: 10em;
+    }
 
-  #word-editor .adder input {
-    border-style: dashed;
-    border-color: green;
-    height: 22px;
-  }
+    #word-editor .adder input {
+        border-style: dashed;
+        border-color: green;
+        height: 22px;
+    }
 
-  .attrName {
-    font-weight: bold;
-    color: #641;
-  }
+    .attrName {
+        font-weight: bold;
+        color: #641;
+    }
 
-  .btn-del {
-    color: rgb(192, 0, 0);
-    background: rgba(192, 0, 0, .1);
-    border-color: rgba(192, 0, 0, .2);
-  }
+    .btn-del {
+        color: rgb(192, 0, 0);
+        background: rgba(192, 0, 0, .1);
+        border-color: rgba(192, 0, 0, .2);
+    }
 
-  .btn-add {
-    color: rgba(0, 96, 0, .5);;
-    border-color: rgba(0, 96, 0, .5);
-  }
+    .btn-add {
+        color: rgba(0, 96, 0, .5);;
+        border-color: rgba(0, 96, 0, .5);
+    }
 
-  #word-editor .ivu-tag-closable {
-    border-style: solid;
-    border-color: #aa0000;
-    color: #c70000;
-    background: transparent;
-  }
+    #word-editor .ivu-tag-closable {
+        border-style: solid;
+        border-color: #aa0000;
+        color: #c70000;
+        background: transparent;
+    }
 
-  #word-editor .ivu-tag-closable .ivu-tag-text {
-    color: #c70000;
-  }
+    #word-editor .ivu-tag-closable .ivu-tag-text {
+        color: #c70000;
+    }
 
-  #word-editor .ivu-tag-closable .ivu-icon {
-    color: red;
-  }
+    #word-editor .ivu-tag-closable .ivu-icon {
+        color: red;
+    }
 
-  #word-editor #x1-rels li {
-    margin: 6px;
-  }
+    #word-editor #x1-rels li {
+        margin: 6px;
+    }
 
-  #word-editor #x1-rels li .x1rmg {
-    border: none 1px #c70000;
-    border-radius: 6px;
-    margin: 3px 7px;
-    padding: 5px 5px 7px;
-  }
+    #word-editor #x1-rels li .x1rmg {
+        border: none 1px #c70000;
+        border-radius: 6px;
+        margin: 3px 7px;
+        padding: 5px 5px 7px;
+    }
 
-  #word-editor #x1-rels li .x1rmg.x1rmg-add {
-    border: dashed 1px green;
-  }
+    #word-editor #x1-rels li .x1rmg.x1rmg-add {
+        border: dashed 1px green;
+    }
 
-  #word-editor #x1-rels li .x1rmg.x1rmg-add input {
-    border: solid 1px rgba(0, 72, 0, .1);
-  }
+    #word-editor #x1-rels li .x1rmg.x1rmg-add input {
+        border: solid 1px rgba(0, 72, 0, .1);
+    }
 
-  #word-editor .icon-add {
-    color: green;
-    margin: 0 7px;
-  }
+    #word-editor .icon-add {
+        color: green;
+        margin: 0 7px;
+    }
 </style>

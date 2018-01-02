@@ -23,7 +23,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "iview": "^2.8.0",
-    "skfe-ui": "^0.1.3",
+    "skfe-ui": "^0.1.12",
     "vue": "^2.5.13",
     "vue-router": "^3.0.1"
   },

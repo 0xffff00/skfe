@@ -11,16 +11,16 @@ module.exports = merge(webpackBaseConfig, {
   // 入口
   entry: {
     main: './src/main',
-    // vendors: ['vue', 'vue-router']
-    vendors: './src/vendors'
+    skfe: ['skfe-ui'],
+    vendors: ['vue', 'vue-router']
+    // vendors: './src/vendors'
   },
   // 输出
   output: {
-    publicPath: '/dist/',
+    path: path.join(__dirname, '../dist'),
     filename: '[name].js',
     chunkFilename: '[name].chunk.js'
   },
-
   // devtool: '#source-map',
   devtool: '#cheap-module-eval-source-map',
   node: {
@@ -35,12 +35,12 @@ module.exports = merge(webpackBaseConfig, {
       'GLOBAL_CONFIG': JSON.stringify(globalConfig)
     }),
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendors',
-      filename: 'vendors.js'
+      names: ['comm1', 'skfe', 'vendors'],
+      minChunks: 3 // Infinity
+      // filename: 'vendors.js'
     }),
     new HtmlWebpackPlugin({
-      filename: '../dist/index.html',
-      // template: './src/assets/index.ejs',
+      template: path.join(__dirname, '../src/index.html'),
       inject: true
     }),
     new FriendlyErrorsPlugin()

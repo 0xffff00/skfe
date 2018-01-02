@@ -1,6 +1,6 @@
 {
   "name": "skfe-ui",
-  "version": "0.1.10",
+  "version": "0.1.13",
   "description": "SkFE Project - UI",
   "author": "hzk <hzkchina@gmail.com>",
   "main": "dist/skfe-ui.js",
@@ -20,15 +20,14 @@
     "url": "https://github.com/0xffff00/skfe.git"
   },
   "license": "MIT",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "axios": "^0.17.1",
     "iview": "^2.8.0",
     "vue": "^2.5.13",
     "vue-router": "^3.0.1",
     "lodash": "^4.17.4",
-    "moment": "^2.20.1"
-  },
-  "devDependencies": {
+    "moment": "^2.20.1",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.12.0",

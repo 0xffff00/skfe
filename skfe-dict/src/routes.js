@@ -15,10 +15,10 @@ const routes = [
     name: 'WordEdit',
     component: WordEditor
   },
-  {
-    path: '/words/:text/view',
-    name: 'WordView',
-    component: WordView
-  }
+  // {
+  //   path: '/words/:text/view',
+  //   name: 'WordView',
+  //   component: WordView
+  // }
 ]
 export default routes

@@ -20,7 +20,6 @@ module.exports = merge(webpackBaseConfig, {
     filename: '[name].js',
     chunkFilename: '[name].chunk.js'
   },
-
   // devtool: '#source-map',
   devtool: '#cheap-module-eval-source-map',
   node: {

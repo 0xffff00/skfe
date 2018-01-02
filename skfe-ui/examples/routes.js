@@ -1,4 +1,5 @@
 import RandomTimeGrid from './views/random-time-grid.vue'
+import RestApiTest from './views/rest-api-test.vue'
 
 const routes = [
   {
@@ -7,6 +8,14 @@ const routes = [
     component: RandomTimeGrid,
     meta: {
       title: 'TimeGrid'
+    }
+  },
+  {
+    path: '/rest-api',
+    name: 'namename',
+    component: RestApiTest,
+    meta: {
+      title: 'Rest API'
     }
   }
 ]
