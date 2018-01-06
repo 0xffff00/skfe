@@ -65,8 +65,8 @@
                         尺寸：{{describeImageSize(viewerModal.imageInfo.width, viewerModal.imageInfo.height)}}<br>
                         文件：{{viewerModal.imageInfo.type}}格式， {{describeFileSize(viewerModal.imageInfo.fileSize)}}<br>
                     </div>
-                    <!--<HerdWordEditor :text="viewerModal.imageDictId">-->
-                    <!--</HerdWordEditor>-->
+                    <WordEditor :text="viewerModal.imageDictId" :dictApi="dictApi">
+                    </WordEditor>
                 </div>
                 <div style="clear:both;"></div>
             </div>
@@ -91,7 +91,7 @@
   import Arrays from '../utils/Arrays'
   import Objects from '../utils/Objects'
   import { TimeGrid, MsgBox } from 'skfe-ui'
-  import { ApiBasedEditor } from 'skfe-dict'
+  import { ApiBasedEditor as WordEditor } from 'skfe-dict'
 
   /**
    * code conventions:
@@ -100,7 +100,7 @@
    * YMD -'2014-02-04'
    */
   export default {
-    components: {TimeGrid, ApiBasedEditor},
+    components: {TimeGrid, WordEditor},
     data: () => ({
       // like [["2017-03-01",1],["2017-03-05",25]], ordered
       countByDateArr2d: [],
@@ -172,7 +172,8 @@
         if (!this.viewerModal.imageInfo) return null
         let hash = this.viewerModal.imageInfo.hash
         return this.getUrlByHash(hash, '1Kq5')
-      }
+      },
+      dictApi: () => dictApi
     },
     created () {
       this.loadCounts()
@@ -229,7 +230,7 @@
         const self = this
         Object.assign(params, {o: 'exifDateTime'})
         // console.log(params)
-        herdApi.imageInfos.httpGetSome(params)(resp2 => {
+        herdApi.imageInfos.gettingSome(params)(resp2 => {
           if (!resp2.ok) {
             MsgBox.open(self, '加载图片')(resp2)
             return
@@ -279,7 +280,7 @@
         self.viewerModal.visible = true
         self.viewerModal.imageDictId = 'HD-IMG-' + imageInfo.hash
 
-        herdApi.mediaFiles.httpGetSome({hash: imageInfo.hash})(resp2 => {
+        herdApi.mediaFiles.gettingSome({hash: imageInfo.hash})(resp2 => {
           self.viewerModal.mediaFiles = resp2.data
         })
       },
@@ -421,7 +422,8 @@
         height: 180px;
         background: rgba(0, 0, 0, 0.6);
         border-bottom-right-radius: 7px;
-        border: rgba(0, 0, 0, 0.3) 3px solid;
+        /*border: rgba(0, 0, 0, 0.3) 3px solid;*/
+        -webkit-filter: blur(10px) brightness(1.2) contrast(0.3);
         color: yellow;
         cursor: default;
     }

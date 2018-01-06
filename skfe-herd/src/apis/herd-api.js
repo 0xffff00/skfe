@@ -1,35 +1,35 @@
-import Api from '../components/SkeanRestApi'
-import appConf from '../../config/sk2/app-conf'
+import config from '../libs/config'
+import {RestApi} from 'skfe-ui'
 
-const CTX = appConf.apis.herd.url
+const CTX = config.herdApiUrl
 
 const getUrlByHash = function (hash, cacheCategory) {
   return CTX + '/file/' + hash + '.jpg?cache=' + cacheCategory
 }
 
-const mediaRepos = new Api(CTX + '/media-repos/', '{name}')
-const mediaFiles = new Api(CTX + '/media-files/', '{path}')
-const imageInfos = new Api(CTX + '/image-infos/', '{hash}')
+const mediaRepos = RestApi.of(CTX + '/media-repos/', '{name}')
+const mediaFiles = RestApi.of(CTX + '/media-files/', '{path}')
+const imageInfos = RestApi.of(CTX + '/image-infos/', '{hash}')
 
 // const listRepos = ajaxList(CTX + '/repos')
 // const listMedias = ajaxList(CTX + '/medias')
 // const listImageMedias = ajaxList(CTX + '/image-infos')
-imageInfos.countByYear = new Api(CTX + '/image-infos/countByYear').httpGet(null)
-imageInfos.countByMonth = new Api(CTX + '/image-infos/countByMonth').httpGet(null)
-imageInfos.countByDate = new Api(CTX + '/image-infos/countByDate').httpGet(null)
+imageInfos.countByYear = RestApi.of(CTX + '/image-infos/countByYear').getting(null)
+imageInfos.countByMonth = RestApi.of(CTX + '/image-infos/countByMonth').getting(null)
+imageInfos.countByDate = RestApi.of(CTX + '/image-infos/countByDate').getting(null)
 
 const jobs = {
   batchSync: {
-    start: params => new Api(CTX + '/jobs/batch-sync', '?repoName={repoName}').httpPut(params, null),
-    status: new Api(CTX + '/jobs/batch-sync/status').httpGet(null),
-    statusAll: new Api(CTX + '/jobs/batch-sync/status/all').httpGet(null)
+    start: params => RestApi.of(CTX + '/jobs/batch-sync', '?repoName={repoName}').putting(params, null),
+    status: RestApi.of(CTX + '/jobs/batch-sync/status').getting(null),
+    statusAll: RestApi.of(CTX + '/jobs/batch-sync/status/all').getting(null)
   },
   thumbnail: {
-    start: params => new Api(CTX + '/jobs/batch-sync', '?repoName={repoName}').httpGet(params),
-    status: new Api(CTX + '/jobs/image/thumbnails/status').httpGet(null)
+    start: params => RestApi.of(CTX + '/jobs/batch-sync', '?repoName={repoName}').getting(params),
+    status: RestApi.of(CTX + '/jobs/image/thumbnails/status').getting(null)
   },
   mediaRepos: {
-    truncate: params => new Api(CTX + '/jobs/media-repos', '?repoName={repoName}').httpDelete(params)
+    truncate: params => RestApi.of(CTX + '/jobs/media-repos', '?repoName={repoName}').deleting(params)
   }
 }
 

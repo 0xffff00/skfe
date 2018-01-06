@@ -22,7 +22,7 @@
 
                 <Table border :loading="ui.loading" :columns="computedModel.columns" :data="data.result.items"></Table>
                 <div class="pager rt">
-                    <Page :page-size-opts="[3,5,10, 20 ,30, 50, 100]"
+                    <Page :page-size-opts="[5,10, 20 ,30, 50, 100]"
                           :page-size="querier.pageSize" :current.sync="querier.pageNum" :total="data.result.totalCount"
                           size="small" show-total show-elevator show-sizer
                           @on-page-size-change="pageSizeChanged"></Page>
@@ -172,7 +172,7 @@
       readItems () {
         let self = this
         self.ui.loading = true
-        self.model.api.httpGetSome(self.translatedQuerierParams)(resp2 => {
+        self.model.api.gettingSome(self.translatedQuerierParams)(resp2 => {
           // self.$message({type: 'success', message: '加载成功 x ' + self.ui.loadTick})
           if (resp2.ok) {
             self.data.result.items = resp2.data
@@ -186,17 +186,17 @@
       deleteItem (item) {
         const self = this
         self.ui.deleting = true
-        self.model.api.httpDelete(item)(MsgBox.open(self, '删除'))
+        self.model.api.deleting(item)(MsgBox.open(self, '删除'))
       },
       saveItem () {
         const self = this
         this.ui.saving = true
         const isNew = self.data.editor.itemOld === null
         if (isNew) {
-          self.model.api.httpPost(self.data.editor.item)(MsgBox.open(self, '创建'))
+          self.model.api.posting(self.data.editor.item)(MsgBox.open(self, '创建'))
         } else {
           const changes = changesOfItem(self.data.editor.itemOld, self.data.editor.item, self.model.columns)
-          self.model.api.httpPatch(self.data.editor.itemOld, changes)(MsgBox.open(self, '更新'))
+          self.model.api.patching(self.data.editor.itemOld, changes)(MsgBox.open(self, '更新'))
         }
       },
 

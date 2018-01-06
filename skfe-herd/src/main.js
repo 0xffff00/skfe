@@ -6,6 +6,7 @@ import Routes from './routes'
 import App from './app.vue'
 import 'iview/dist/styles/iview.css'
 import 'skfe-ui/dist/main.css'
+import 'skfe-dict/dist/main.css'
 import 'font-awesome/css/font-awesome.css'
 
 Vue.use(VueRouter)
