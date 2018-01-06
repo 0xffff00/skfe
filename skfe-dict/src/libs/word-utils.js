@@ -1,4 +1,4 @@
-import DAGVisitor from '../libs/dag-visitor'
+import DAGVisitor from './dag-visitor'
 
 /**
  * ---Coding Naming Conventions---

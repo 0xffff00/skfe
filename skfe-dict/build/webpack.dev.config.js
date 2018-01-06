@@ -19,7 +19,8 @@ module.exports = merge(webpackBaseConfig, {
   output: {
     path: path.join(__dirname, '../dist'),
     filename: '[name].js',
-    chunkFilename: '[name].chunk.js'
+    chunkFilename: '[name].chunk.js',
+    publicPath: '/'
   },
   // devtool: '#source-map',
   devtool: '#cheap-module-eval-source-map',
@@ -27,7 +28,10 @@ module.exports = merge(webpackBaseConfig, {
     fs: 'empty'
   },
   devServer: {
-    port: globalConfig.port
+    publicPath: '/',
+    port: globalConfig.port,
+    historyApiFallback: true,
+    inline: true
   },
   plugins: [
     new webpack.NamedModulesPlugin(),

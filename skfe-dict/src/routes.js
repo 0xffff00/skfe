@@ -1,30 +1,21 @@
-import TimeGridDemo from './example/time-grid-demo.vue'
-import WordViewerDemo from './example/word-viewer-demo.vue'
-import WordEditor from './views/word-editor.vue'
+import grid from './examples/time-grid-demo.vue'
+import editor from './examples/word-editor-demo2.vue'
 
 const routes = [
+  // {
+  //   path: '/',
+  //   component: TimeGridDemo
+  // },
   {
-    path: '/time-grid',
-    name: 'namename',
-    component: TimeGridDemo,
+    path: '/eg/words/:text/edit',
+    component: editor
+  },
+  {
+    path: '/eg/time-grid-demo',
+    component: grid,
     meta: {
       title: 'titletitle'
     },
-  },
-  {
-    path: '/words/:text/edit',
-    name: 'WordEdit',
-    component: WordEditor
-  },
-  {
-    path: '/WordViewerDemo',
-    name: 'WordViewerDemo',
-    component: WordViewerDemo
-  },
-  // {
-  //   path: '/words/:text/view',
-  //   name: 'WordView',
-  //   component: WordView
-  // }
+  }
 ]
 export default routes

@@ -6,27 +6,24 @@ import Routes from './routes'
 import App from './dict-app.vue'
 import 'iview/dist/styles/iview.css'
 import 'skfe-ui/dist/main.css'
-
-import { TimeGrid } from 'skfe-ui'
+import 'font-awesome/css/font-awesome.css'
 
 Vue.use(VueRouter)
 Vue.use(iView)
-
-Vue.component('TimeGrid', TimeGrid)
 
 // 开启debug模式
 Vue.config.debug = true
 
 // 路由配置
 const RouterConfig = {
-  // mode: 'history',
+  mode: 'history',
   routes: Routes
 }
 const router = new VueRouter(RouterConfig)
 
 router.beforeEach((to, from, next) => {
   iView.LoadingBar.start()
-  window.document.title = to.meta.title || 'SkFE Project'
+  window.document.title = (to.meta && to.meta.title) || 'SkFE Project'
   next()
 })
 

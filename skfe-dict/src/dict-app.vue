@@ -1,7 +1,7 @@
 <template>
     <div>
         <Menu active-name="1" mode="horizontal" theme="dark">
-            <router-link to="/time-grid">
+            <router-link to="/eg/time-grid-demo">
                 <MenuItem name="1">时间格子</MenuItem>
             </router-link>
             <Submenu name="3">
@@ -9,11 +9,8 @@
                     DICT(DEV only)
                 </template>
                 <MenuGroup title="other1" mode="horizontal">
-                    <router-link to="/words/复旦大学/edit">
-                        <MenuItem name="3">复旦大学</MenuItem>
-                    </router-link>
-                    <router-link to="/WordViewerDemo">
-                        <MenuItem name="3">WordViewerDemo</MenuItem>
+                    <router-link to="/eg/words/复旦大学/edit">
+                        <MenuItem name="3aa">复旦大学</MenuItem>
                     </router-link>
                     <MenuItem name="3">dict1</MenuItem>
                     <MenuItem name="4">流vccc</MenuItem>
@@ -31,14 +28,10 @@
     </div>
 </template>
 <script>
-  import TimeGridDemo from './example/time-grid-demo.vue'
-  import WordViewerDemo from './example/word-viewer-demo.vue'
-
   export default {
     data: () => ({}),
     created () {
 
-    },
-    components: {TimeGridDemo, WordViewerDemo}
+    }
   }
 </script>
