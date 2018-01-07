@@ -44,7 +44,7 @@ module.exports = merge(webpackBaseConfig, {
       // filename: 'vendors.js'
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, '../src/index.html'),
+      template: path.join(__dirname, '../index.html'),
       inject: true
     }),
     new FriendlyErrorsPlugin()
