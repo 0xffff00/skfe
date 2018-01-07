@@ -1,0 +1,4 @@
+{
+  "port": 2333,
+  "tallyApiUrl":"http://xxx.api.a-prod-host.com"
+}
