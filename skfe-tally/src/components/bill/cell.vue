@@ -1,35 +1,35 @@
 <template>
     <div :class="{cell:true,editing:isEditing,active:isActive}"
-         @click="click" @dblclick="dblclick">
+         @click="click" @dblclick="dblclick" :style="{width:`${width}em`}">
         <div v-if="isActive && isEditing">
             <Select v-if="valHints" v-model="curr.val" filterable>
                 <Option v-for="h in valHints" :value="h" :key="h">{{ h }}</Option>
             </Select>
-            <input v-else v-model="curr.val" @blur="" v-focus2/>
+            <input v-else v-model="curr.val" @blur="" :class="valCssClass" v-focus2/>
         </div>
 
-        <div v-else :class="valCssClass">{{valFmt(val)}}</div>
+        <div v-else :class="valCssClass">{{valFmt(finalVal)}}</div>
 
     </div>
 </template>
 <script>
-  import currency from 'currency.js'
+  import { type } from 'ramda'
+  import { fmtCNY, fmtDefault } from './util'
 
   export default {
-    data: () => ({
-      valFmt: x => x,
-      valCssClass: null
-    }),
+    data: () => ({}),
     props: {
       name: {type: String},
       editable: {type: Boolean, default: true},
-      val: {type: [String, Number]},
+      val: {type: [String, Number, Function], default: null},
       i: {type: Number},
       j: {type: Number},
+      width: {type: Number},
       // like {i:3,j:5}
       curr: {type: Object, default: {}},
+      rows: {type: Array, default: []},
       type: {type: String},
-      valFormatter: {type: Function},
+      valFormatter: {type: Function, default: fmtDefault},
       valHints: {type: Array}
     },
     computed: {
@@ -38,13 +38,30 @@
       },
       isEditing () {
         return this.isActive && this.curr.editing
+      },
+      finalVal () {
+        if (this.val === null) {
+          return this.rows[this.i][this.name]
+        }
+        if (type(this.val) === 'String') {
+          return this.rows[this.i][this.val]
+        }
+        if (type(this.val) === 'Function') {
+          return this.val(this.rows, this.i)
+        }
+        return null
+      },
+      valFmt () {
+        if (this.type === 'CNY') return fmtCNY
+        return this.valFormatter
+      },
+      valCssClass () {
+        if (this.type === 'CNY') return 'cny'
+        if (this.type === 'num') return 'num'
+        return 'txt'
       }
     },
     created () {
-      if (this.type === 'CNY') {
-        this.valFmt = fmtCNY
-        this.valCssClass = 'cny'
-      }
     },
     methods: {
       click () {
@@ -71,10 +88,7 @@
     }
   }
 
-  function fmtCNY (num) {
-    if (!num) return null
-    return currency(num).format()
-  }
+
 </script>
 <style scoped lang="less">
     .cell {
@@ -95,6 +109,14 @@
         border-width: 0;
         width: 100%;
         background: rgba(220, 164, 182, 0.5);
+    }
+
+    .txt {
+
+    }
+
+    .num {
+        text-align: right;
     }
 
     .cny {

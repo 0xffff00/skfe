@@ -1,91 +1,105 @@
 <template>
     <div>
-        {{JSON.stringify(curr)}}
         <table>
+            <thead>
             <tr>
-                <th class="date">日期</th>
-                <th class="desc">账务摘要</th>
-                <th class="cny">单价(CNY/KG)</th>
-                <th class="weight">重量(KG)</th>
-                <th class="cny">借方(CNY)</th>
-                <th class="cny">贷方(CNY)</th>
-                <th class="cny">余额(CNY)</th>
+                <th>#</th>
+                <th>日期</th>
+                <th>账务摘要</th>
+                <th>单价(CNY/KG)</th>
+                <th>重量(KG)</th>
+                <th>借方(CNY)</th>
+                <th>贷方(CNY)</th>
+                <th>余额(CNY)</th>
             </tr>
-
+            </thead>
+            <tbody>
             <tr v-for="(row,i) in rows">
-                <td class="date">
-                    <Cell name="date" :val="row.date" :i="i" :j="0" :curr="curr" @jumpToCell="jumpToCell"></Cell>
+                <td>{{i}}</td>
+                <td v-for="(c,j) in colDefs">
+                    <Cell :name="c.name" :type="c.type" :val="valOfColDefs[j]"
+                          :i="i" :j="j" :curr="curr" :rows="rows"
+                          @jumpToCell="jumpToCell" :width="c.width" :editable="c.editable"></Cell>
                 </td>
-                <td class="desc">
-                    <Cell name="desc" :val="row.desc" :i="i" :j="1" :curr="curr"
-                          @jumpToCell="jumpToCell"></Cell>
-                </td>
-                <td class="cny">
-                    <Cell name="price" type="CNY" :val="row.price" :i="i" :j="2" :curr="curr"
-                          @jumpToCell="jumpToCell"></Cell>
-                </td>
-                <td class="weight">
-                    <Cell name="weight" :val="row.weight" :i="i" :j="3" :curr="curr"
-                          @jumpToCell="jumpToCell"></Cell>
-                </td>
-                <td class="cny">
-                    <Cell name="borrow" type="CNY" :val="row.borrow" :i="i" :j="4" :curr="curr"
-                          @jumpToCell="jumpToCell"></Cell>
-                </td>
-                <td class="cny">
-                    <Cell name="lend" type="CNY" :val="row.lend" :i="i" :j="5" :curr="curr"
-                          @jumpToCell="jumpToCell"></Cell>
-                </td>
-                <td class="cny">
-                    <Cell name="balance" type="CNY" :val="balances[i]" :i="i" :j="6" :curr="curr"
-                          @jumpToCell="jumpToCell" :editable="false"></Cell>
-                </td>
-
             </tr>
-
+            </tbody>
+            <tfoot>
+            <tr>
+                <th></th>
+                <th>{{rowTotal.makeDate}}</th>
+                <th>{{rowTotal.desc}}</th>
+                <th></th>
+                <th>{{rowTotal.volume}}</th>
+                <th class="cny">{{rowTotal.borrow}}</th>
+                <th class="cny">{{rowTotal.lend}}</th>
+                <th class="cny">{{rowTotal.balance}}</th>
+            </tr>
+            </tfoot>
         </table>
     </div>
 </template>
 <script>
   import moment from 'moment'
   import Cell from './cell.vue'
+  import { fmtCNY, fmtDefault } from './util'
 
   export default {
     components: {Cell},
     data: () => ({
       rows: [],
       curr: {i: null, j: null, editing: false},
-      inputText: {
-        visible: 'block',
-        value: null
-      },
       colDefs: [
-        {name: 'date', editable: true, type: 'date'},
-        {name: 'desc', editable: true, type: 'date'},
-        {name: 'price', editable: true, type: 'cny'},
-        {name: 'weight', editable: true, type: 'weight'},
-        {name: 'borrow', editable: true, type: 'cny'},
-        {name: 'lend', editable: true, type: 'cny'},
-        {name: 'balance', editable: false, type: 'cny'}
+        {name: 'makeDate', type: 'date', width: 8},
+        {name: 'desc', type: 'date', width: 15},
+        {name: 'price', type: 'CNY', width: 8},
+        {name: 'volume', type: 'num', width: 6},
+        {name: 'borrow', type: 'CNY', width: 8},
+        {name: 'lend', type: 'CNY', width: 8},
+        {name: 'balance', type: 'CNY', width: 8, editable: false}
       ],
       descHints: ['304', '201', '202', '收到汇款', '开票']
     }),
     props: {
-      // like [{date:'2018-01-11',desc:'',price:23.5,weight:400,borrow:0,lend:9400}..]
-      lastBalance: {type: Number, default: 0},
+      baseBalance: {type: Number, default: 0},
+      // like [{date:'2018-01-11',desc:'',price:23.5,weight:400,amount:9400}..]
       deals: {type: Array, default: []}
     },
     computed: {
+      valOfColDefs () {
+        return [null, null, null, null, null, null,
+          (rs, i) => this.balances[i]
+        ]
+      },
+      lends () {
+        return this.rows.map(row => row.amount).map(x => x < 0 ? -x : null)
+      },
+      borrows () {
+        return this.rows.map(row => row.amount).map(x => x > 0 ? x : null)
+      },
       balances () {
         const ds = this.rows
-        const N = this.toNum
-        let last = N(ds[0].lend) - N(ds[0].borrow)
+        let last = (ds[0].lend || 0) - (ds[0].borrow || 0)
         let res = [last]
         for (let i = 1; i < ds.length; i++) {
-          last = last + N(ds[i].lend) - N(ds[i].borrow)
+          last = last + (ds[i].lend || 0) - (ds[i].borrow || 0)
           res.push(last)
         }
         return res
+      },
+
+      rowTotal () {
+        let res = this.rows.reduce((s, a) => ({
+          volume: (s.volume || 0) + (a.volume || 0),
+          borrow: (s.borrow || 0) + (a.borrow || 0),
+          lend: s.lend + (a.lend || 0)
+        }))
+        return {
+          makeDate: moment().format('YYYY-MM-DD'),
+          desc: '总计',
+          borrow: fmtCNY(res.borrow),
+          lend: fmtCNY(res.lend),
+          balance: fmtCNY((res.lend || 0) - (res.borrow || 0))
+        }
       }
     },
     created () {
@@ -97,8 +111,16 @@
     },
     methods: {
       reload () {
-        let row0 = {desc: '上次结欠', lend: this.lastBalance}
-        this.rows = [row0, ...this.deals]
+        let row0 = {desc: '上次结欠', lend: this.baseBalance}
+        let arr = this.deals.map(d => ({
+          makeDate: d.makeDate,
+          desc: d.desc,
+          price: d.price,
+          volume: d.volume,
+          borrow: d.amount < 0 ? -d.amount : null,
+          lend: d.amount > 0 ? d.amount : null
+        }))
+        this.rows = [row0, ...arr]
       },
       isLegal (i, j) {
         return i >= 0 && i < this.rows.length && j >= 0 && j < this.colDefs.length
@@ -114,6 +136,7 @@
         if (this.curr.i === i && this.curr.j === j) {
           if (editing === false) editing = null
         }
+        if (!this.colDefs[j].editable === false) editing = false
         this.finishEditCell()
         if (!this.isLegal(i, j)) return
         this.curr.i = i
@@ -124,37 +147,47 @@
       },
       finishEditCell () {
         if (this.curr.i === null) return
+        const colName = this.colDefs[this.curr.j].name
+        if (colName === 'makeDate') {
+          this.curr.val = guessDate(this.curr.val)
+        }
+        // auto calc lend=pricexvolume
+        if (colName === 'price' || colName === 'volume') {
+          let row = this.rows[this.curr.i]
+          if (row.price && row.volume) {
+            row.lend = row.price * row.volume
+          }
+        }
         // this.curr.editing = false
         // console.log(this.curr)
         this.setVal(this.curr.i, this.curr.j, this.curr.val)
       },
-      toNum (obj) {
-        let res = parseFloat(obj)
-        return isNaN(res) ? 0 : res
-      },
-      onKeyPress (keyboardEvent) {
-        const k = keyboardEvent.code
-        // console.log(keyboardEvent)
+      onKeyPress (evt) {
+        const k = evt.code
+        console.log(evt)
         let i = this.curr.i
         let j = this.curr.j
         if (i === null) return
         switch (k) {
           case 'ArrowDown':
+            evt.preventDefault()
             this.jumpToCell(i + 1, j)
             break
           case 'ArrowUp':
             this.jumpToCell(i - 1, j)
             break
           case 'ArrowLeft':
-            if (!this.curr.editing) this.jumpToCell(i, j - 1)
+            if (!this.curr.editing || evt.altKey) this.jumpToCell(i, j - 1)
             break
           case 'ArrowRight':
-            if (!this.curr.editing) this.jumpToCell(i, j + 1)
+            if (!this.curr.editing || evt.altKey) this.jumpToCell(i, j + 1)
             break
           case 'Enter':
+          case 'NumpadEnter':
             if (this.curr.editing) {
-              this.jumpToCell(i, j)
+              // this.jumpToCell(i, j)
               this.curr.editing = false
+              this.finishEditCell()
             } else this.curr.editing = true
             break
           case 'Tab':
@@ -194,6 +227,9 @@
 </script>
 <style scoped lang="less">
     table {
+        tfoot {
+            border-top: double;
+        }
         font-size: 10pt;
         border: solid 1px;
         border-spacing: 0;
@@ -208,20 +244,7 @@
         td.editing {
             border: solid 2px black;
         }
-        .date {
-            width: 10em;
-        }
-        .desc {
-            width: 15em;
-        }
         .cny {
-            width: 6em;
-        }
-        .weight {
-            width: 6em;
-        }
-
-        td.weight {
             text-align: right;
         }
     }
