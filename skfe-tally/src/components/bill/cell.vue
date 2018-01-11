@@ -21,13 +21,14 @@
     props: {
       name: {type: String},
       editable: {type: Boolean, default: true},
+      // like 'price'/4/(rs,i)=>rs[i].price
       val: {type: [String, Number, Function], default: null},
       i: {type: Number},
       j: {type: Number},
       width: {type: Number},
       // like {i:3,j:5}
       curr: {type: Object, default: {}},
-      rows: {type: Array, default: []},
+      deal: {type: Object, default: {}},
       type: {type: String},
       valFormatter: {type: Function, default: fmtDefault},
       valHints: {type: Array}
@@ -41,15 +42,18 @@
       },
       finalVal () {
         if (this.val === null) {
-          return this.rows[this.i][this.name]
+          return this.deal[this.name]
         }
         if (type(this.val) === 'String') {
-          return this.rows[this.i][this.val]
+          return this.deal[this.val]
         }
         if (type(this.val) === 'Function') {
-          return this.val(this.rows, this.i)
+          return this.val(this.deal, this.i)
         }
         return null
+      },
+      fff () {
+        return this.deal[this.name]
       },
       valFmt () {
         if (this.type === 'CNY') return fmtCNY
@@ -87,8 +91,6 @@
       }
     }
   }
-
-
 </script>
 <style scoped lang="less">
     .cell {

@@ -1,8 +1,8 @@
 <template>
     <div>
-        <Menu active-name="1" mode="horizontal" theme="light">
-            <router-link to="/eg/time-grid-demo">
-                <MenuItem name="1">aaa</MenuItem>
+        <Menu active-name="1" mode="horizontal" theme="light" v-if="menuVisible">
+            <router-link to="/bills/0/edit">
+            <MenuItem name="3waa">新建对账单</MenuItem>
             </router-link>
             <Submenu name="3">
                 <template slot="title">
@@ -30,6 +30,11 @@
 <script>
   export default {
     data: () => ({}),
+    computed: {
+      menuVisible () {
+        return !this.$route.meta.noMenu
+      }
+    },
     created () {
 
     }

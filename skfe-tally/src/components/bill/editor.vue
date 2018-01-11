@@ -18,8 +18,12 @@
                 <td>{{i}}</td>
                 <td v-for="(c,j) in colDefs">
                     <Cell :name="c.name" :type="c.type" :val="valOfColDefs[j]"
-                          :i="i" :j="j" :curr="curr" :rows="rows"
+                          :i="i" :j="j" :curr="curr" :deal="rows[i]"
                           @jumpToCell="jumpToCell" :width="c.width" :editable="c.editable"></Cell>
+                </td>
+                <td>
+                    <a @click="insertRow(i)">add</a>
+                    <a @click="deleteRow(i)">del</a>
                 </td>
             </tr>
             </tbody>
@@ -39,10 +43,19 @@
     </div>
 </template>
 <script>
+  import { clone } from 'ramda'
   import moment from 'moment'
   import Cell from './cell.vue'
   import { fmtCNY, fmtDefault } from './util'
 
+  const defaultRow = {
+    makeDate: null,
+    desc: null,
+    price: null,
+    volume: null,
+    borrow: null,
+    lend: null
+  }
   export default {
     components: {Cell},
     data: () => ({
@@ -60,14 +73,21 @@
       descHints: ['304', '201', '202', '收到汇款', '开票']
     }),
     props: {
+      id: {type: Number},
       baseBalance: {type: Number, default: 0},
+      finalBalance: {type: Number},
+      startDate: {type: String},
+      endDate: {type: String},
+      mainSeller: {type: String},
+      mainBuyer: {type: String},
+      memo: {type: String},
       // like [{date:'2018-01-11',desc:'',price:23.5,weight:400,amount:9400}..]
       deals: {type: Array, default: []}
     },
     computed: {
       valOfColDefs () {
         return [null, null, null, null, null, null,
-          (rs, i) => this.balances[i]
+          (row, i) => this.balances[i]
         ]
       },
       lends () {
@@ -129,16 +149,25 @@
         return this.rows[i][this.colDefs[j].name]
       },
       setVal (i, j, val) {
-        // TODO guess date
-        this.rows[i][this.colDefs[j].name] = val
+        let t = this.colDefs[j].type
+        let v = val
+        if (v !== '' && v !== null && v !== undefined) {
+          if (t === 'CNY' || t === 'num') {
+            v = parseInt(val)
+          }
+        }
+        this.rows[i][this.colDefs[j].name] = v
       },
       jumpToCell (i, j, editing) {
+        if (i === this.rows.length) {
+          this.insertRow(i - 1)
+        }
+        if (!this.isLegal(i, j)) return
         if (this.curr.i === i && this.curr.j === j) {
           if (editing === false) editing = null
         }
         if (!this.colDefs[j].editable === false) editing = false
         this.finishEditCell()
-        if (!this.isLegal(i, j)) return
         this.curr.i = i
         this.curr.j = j
         this.curr.val = this.getVal(i, j)
@@ -151,6 +180,7 @@
         if (colName === 'makeDate') {
           this.curr.val = guessDate(this.curr.val)
         }
+        this.setVal(this.curr.i, this.curr.j, this.curr.val)
         // auto calc lend=pricexvolume
         if (colName === 'price' || colName === 'volume') {
           let row = this.rows[this.curr.i]
@@ -158,9 +188,12 @@
             row.lend = row.price * row.volume
           }
         }
-        // this.curr.editing = false
-        // console.log(this.curr)
-        this.setVal(this.curr.i, this.curr.j, this.curr.val)
+      },
+      insertRow (i) {
+        this.rows.splice(i + 1, 0, clone(defaultRow))
+      },
+      deleteRow (i) {
+        this.rows.splice(i, 1)
       },
       onKeyPress (evt) {
         const k = evt.code

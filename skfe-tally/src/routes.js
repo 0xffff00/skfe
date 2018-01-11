@@ -1,4 +1,5 @@
-import editordemo from './examples/editor-demo.vue'
+import EditorDemo from './examples/editor-demo.vue'
+import BillEditor from './views/basic-editor.vue'
 
 const routes = [
   // {
@@ -7,7 +8,14 @@ const routes = [
   // },
   {
     path: '/eg/editor-demo',
-    component: editordemo,
+    component: EditorDemo,
+  },
+  {
+    path: '/bills/:billId/edit',
+    component: BillEditor,
+    meta:{
+      noMenu:true
+    }
   }
 ]
 export default routes
