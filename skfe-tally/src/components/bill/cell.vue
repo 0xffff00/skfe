@@ -5,7 +5,7 @@
             <Select v-if="valHints" v-model="curr.val" filterable>
                 <Option v-for="h in valHints" :value="h" :key="h">{{ h }}</Option>
             </Select>
-            <input v-else v-model="curr.val" @blur="" :class="valCssClass" v-focus2/>
+            <input v-else v-model="curr.val" @blur="" :class="valCssClass" v-focus2="curr.focus2"/>
         </div>
 
         <div v-else :class="valCssClass">{{valFmt(finalVal)}}</div>
@@ -28,7 +28,7 @@
       width: {type: Number},
       // like {i:3,j:5}
       curr: {type: Object, default: {}},
-      deal: {type: Object, default: {}},
+      row: {type: Object, default: {}},
       type: {type: String},
       valFormatter: {type: Function, default: fmtDefault},
       valHints: {type: Array}
@@ -42,18 +42,15 @@
       },
       finalVal () {
         if (this.val === null) {
-          return this.deal[this.name]
+          return this.row[this.name]
         }
         if (type(this.val) === 'String') {
-          return this.deal[this.val]
+          return this.row[this.val]
         }
         if (type(this.val) === 'Function') {
-          return this.val(this.deal, this.i)
+          return this.val(this.row, this.i)
         }
         return null
-      },
-      fff () {
-        return this.deal[this.name]
       },
       valFmt () {
         if (this.type === 'CNY') return fmtCNY
@@ -84,8 +81,8 @@
         }
       },
       focus2: { // focus after select all text
-        inserted: function (el) {
-          el.select()
+        inserted: function (el, binding) {
+          if (binding.value) el.select()
           el.focus()
         }
       }
@@ -105,12 +102,13 @@
 
     .cell.editing {
         border: dashed 1px #01112f;
+
     }
 
     input {
         border-width: 0;
         width: 100%;
-        background: rgba(220, 164, 182, 0.5);
+        background: rgb(255, 221, 213);
     }
 
     .txt {

@@ -1,5 +1,13 @@
 <template>
     <div>
+        <div>
+            <label>客户名：</label>
+            <Input size="small"></Input>
+            <label>开始日期：</label>
+            <DatePicker size="small" type="date" placeholder="开始日期" v-model="bill.startDate"></DatePicker>
+            <label>结束日期：</label>
+            <DatePicker size="small" type="date" placeholder="结束日期" v-model="bill.endDate"></DatePicker>
+        </div>
         <table>
             <thead>
             <tr>
@@ -14,11 +22,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(row,i) in rows">
+            <tr v-for="(deal,i) in bill.deals">
                 <td>{{i}}</td>
                 <td v-for="(c,j) in colDefs">
                     <Cell :name="c.name" :type="c.type" :val="valOfColDefs[j]"
-                          :i="i" :j="j" :curr="curr" :deal="rows[i]"
+                          :i="i" :j="j" :curr="curr" :row="deal"
                           @jumpToCell="jumpToCell" :width="c.width" :editable="c.editable"></Cell>
                 </td>
                 <td>
@@ -30,40 +38,32 @@
             <tfoot>
             <tr>
                 <th></th>
-                <th>{{rowTotal.makeDate}}</th>
-                <th>{{rowTotal.desc}}</th>
+                <th>{{endDateOfRowZ}}</th>
+                <th>{{rowZ.desc}}</th>
                 <th></th>
-                <th>{{rowTotal.volume}}</th>
-                <th class="cny">{{rowTotal.borrow}}</th>
-                <th class="cny">{{rowTotal.lend}}</th>
-                <th class="cny">{{rowTotal.balance}}</th>
+                <th>{{rowZ.volume}}</th>
+                <th class="cny">{{rowZ.borrow}}</th>
+                <th class="cny">{{rowZ.lend}}</th>
+                <th class="cny">{{rowZ.balance}}</th>
             </tr>
             </tfoot>
         </table>
     </div>
 </template>
 <script>
-  import { clone } from 'ramda'
+  import { merge, clone } from 'ramda'
   import moment from 'moment'
   import Cell from './cell.vue'
-  import { fmtCNY, fmtDefault } from './util'
+  import { fmtCNY, fmtDefault, defaultRow, today } from './util'
 
-  const defaultRow = {
-    makeDate: null,
-    desc: null,
-    price: null,
-    volume: null,
-    borrow: null,
-    lend: null
-  }
   export default {
     components: {Cell},
     data: () => ({
-      rows: [],
-      curr: {i: null, j: null, editing: false},
+      curr: {i: null, j: null, editing: false, focus2: true},
+      row0: defaultRow,
       colDefs: [
         {name: 'makeDate', type: 'date', width: 8},
-        {name: 'desc', type: 'date', width: 15},
+        {name: 'desc', type: 'txt', width: 15},
         {name: 'price', type: 'CNY', width: 8},
         {name: 'volume', type: 'num', width: 6},
         {name: 'borrow', type: 'CNY', width: 8},
@@ -73,137 +73,145 @@
       descHints: ['304', '201', '202', '收到汇款', '开票']
     }),
     props: {
-      id: {type: Number},
-      baseBalance: {type: Number, default: 0},
-      finalBalance: {type: Number},
-      startDate: {type: String},
-      endDate: {type: String},
-      mainSeller: {type: String},
-      mainBuyer: {type: String},
-      memo: {type: String},
-      // like [{date:'2018-01-11',desc:'',price:23.5,weight:400,amount:9400}..]
-      deals: {type: Array, default: []}
+      bill: {type: Object, default: {}}
     },
     computed: {
       valOfColDefs () {
-        return [null, null, null, null, null, null,
+        return [null, null, null, null,
+          (row, i) => row.amount < 0 ? -row.amount : null,
+          (row, i) => row.amount > 0 ? row.amount : null,
           (row, i) => this.balances[i]
         ]
       },
-      lends () {
-        return this.rows.map(row => row.amount).map(x => x < 0 ? -x : null)
-      },
-      borrows () {
-        return this.rows.map(row => row.amount).map(x => x > 0 ? x : null)
-      },
       balances () {
-        const ds = this.rows
-        let last = (ds[0].lend || 0) - (ds[0].borrow || 0)
+        const arr = this.bill.deals.map(d => d.amount || 0)
+        let last = arr[0]
         let res = [last]
-        for (let i = 1; i < ds.length; i++) {
-          last = last + (ds[i].lend || 0) - (ds[i].borrow || 0)
+        for (let i = 1; i < arr.length; i++) {
+          last += arr[i]
           res.push(last)
         }
         return res
       },
-
-      rowTotal () {
-        let res = this.rows.reduce((s, a) => ({
-          volume: (s.volume || 0) + (a.volume || 0),
-          borrow: (s.borrow || 0) + (a.borrow || 0),
-          lend: s.lend + (a.lend || 0)
-        }))
+      endDateOfRowZ () {
+        return moment(this.bill.endDate).format('YYYY-MM-DD')
+      },
+      rowZ () {
+        if (!this.bill.deals.length) return {}
+        let res = this.bill.deals
+          .map(d => ({volume: d.volume || 0, amount: d.amount || 0}))
+          .reduce((s, a) => ({
+            volume: s.volume + a.volume,
+            borrow: s.amount < 0 ? -s.amount : 0,
+            lend: s.amount > 0 ? s.amount : 0
+          }), 0)
         return {
-          makeDate: moment().format('YYYY-MM-DD'),
+          makeDate: this.bill.endDate,
           desc: '总计',
           borrow: fmtCNY(res.borrow),
           lend: fmtCNY(res.lend),
-          balance: fmtCNY((res.lend || 0) - (res.borrow || 0))
+          balance: fmtCNY(res.lend - res.borrow)
         }
       }
     },
-    created () {
+    mounted () {
       const self = this
       window.addEventListener('keyup', evt => {
         self.onKeyPress(evt)
       })
-      this.reload()
     },
     methods: {
-      reload () {
-        let row0 = {desc: '上次结欠', lend: this.baseBalance}
-        let arr = this.deals.map(d => ({
-          makeDate: d.makeDate,
-          desc: d.desc,
-          price: d.price,
-          volume: d.volume,
-          borrow: d.amount < 0 ? -d.amount : null,
-          lend: d.amount > 0 ? d.amount : null
-        }))
-        this.rows = [row0, ...arr]
-      },
       isLegal (i, j) {
-        return i >= 0 && i < this.rows.length && j >= 0 && j < this.colDefs.length
+        return i !== null && i >= 0 && i < this.bill.deals.length && j >= 0 && j < this.colDefs.length
       },
       getVal (i, j) {
-        return this.rows[i][this.colDefs[j].name]
+        let t = this.colDefs[j].type
+        let n = this.colDefs[j].name
+        let v = null
+        if (n === 'borrow') {
+          v = -this.bill.deals[i]['amount']
+        } else if (n === 'lend') {
+          v = this.bill.deals[i]['amount']
+        } else {
+          v = this.bill.deals[i][n]
+        }
+        return v
       },
       setVal (i, j, val) {
         let t = this.colDefs[j].type
+        let n = this.colDefs[j].name
         let v = val
         if (v !== '' && v !== null && v !== undefined) {
           if (t === 'CNY' || t === 'num') {
-            v = parseInt(val)
+            v = parseFloat(val)
           }
         }
-        this.rows[i][this.colDefs[j].name] = v
+        if (n === 'borrow') {
+          this.bill.deals[i]['amount'] = -v
+          return
+        }
+        if (n === 'lend') {
+          this.bill.deals[i]['amount'] = v
+          return
+        }
+        this.bill.deals[i][n] = v
       },
       jumpToCell (i, j, editing) {
-        if (i === this.rows.length) {
+        if (i === this.bill.deals.length) {
           this.insertRow(i - 1)
         }
         if (!this.isLegal(i, j)) return
         if (this.curr.i === i && this.curr.j === j) {
           if (editing === false) editing = null
         }
-        if (!this.colDefs[j].editable === false) editing = false
-        this.finishEditCell()
+        this.finishEditCurrCell()
         this.curr.i = i
         this.curr.j = j
         this.curr.val = this.getVal(i, j)
-        if (editing === true) this.curr.editing = true
+        if (editing === true) {
+          this.curr.editing = true
+          this.curr.focus2 = true
+        }
         if (editing === false) this.curr.editing = false
       },
-      finishEditCell () {
-        if (this.curr.i === null) return
+      finishEditCurrCell () {
+        if (!this.isLegal(this.curr.i, this.curr.j)) return
+        if (this.colDefs[this.curr.j].editable === false) return
+        if (!this.curr.editing) return
+        this.curr.editing = false
         const colName = this.colDefs[this.curr.j].name
         if (colName === 'makeDate') {
           this.curr.val = guessDate(this.curr.val)
         }
         this.setVal(this.curr.i, this.curr.j, this.curr.val)
-        // auto calc lend=pricexvolume
+        // auto calc lend = price x volume
         if (colName === 'price' || colName === 'volume') {
-          let row = this.rows[this.curr.i]
+          let row = this.bill.deals[this.curr.i]
           if (row.price && row.volume) {
-            row.lend = row.price * row.volume
+            row.amount = row.price * row.volume
           }
         }
       },
+      startEditCurrCell () {
+        if (!this.isLegal(this.curr.i, this.curr.j)) return
+        if (this.colDefs[this.curr.j].editable === false) return
+        if (this.curr.editing) return
+        this.curr.editing = true
+      },
       insertRow (i) {
-        this.rows.splice(i + 1, 0, clone(defaultRow))
+        this.bill.deals.splice(i + 1, 0, clone(defaultRow))
       },
       deleteRow (i) {
-        this.rows.splice(i, 1)
+        this.bill.deals.splice(i, 1)
       },
       onKeyPress (evt) {
-        const k = evt.code
+        const k = evt.key
         console.log(evt)
         let i = this.curr.i
         let j = this.curr.j
         if (i === null) return
         switch (k) {
           case 'ArrowDown':
-            evt.preventDefault()
             this.jumpToCell(i + 1, j)
             break
           case 'ArrowUp':
@@ -216,24 +224,46 @@
             if (!this.curr.editing || evt.altKey) this.jumpToCell(i, j + 1)
             break
           case 'Enter':
-          case 'NumpadEnter':
             if (this.curr.editing) {
-              // this.jumpToCell(i, j)
-              this.curr.editing = false
-              this.finishEditCell()
-            } else this.curr.editing = true
+              this.finishEditCurrCell()
+            } else {
+              this.startEditCurrCell()
+              this.curr.focus2 = true
+            }
             break
           case 'Tab':
             this.jumpToCell(i, j + 1)
             break
           case 'Escape':
-            this.curr.editing = false
+            this.finishEditCurrCell()
             break
           case 'F2':
-            this.curr.editing = true
+            this.startEditCurrCell()
+            break
+          case 'Delete':
+            if (!this.curr.editing) {
+              this.setVal(i, j, null)
+              this.jumpToCell(i, j)
+            }
             break
           default:
+            if (k === '.' || k === '-' ||
+              (k.length === 1 && k >= '0' && k <= '9') ||
+              (k.length === 1 && k >= 'a' && k <= 'z') ||
+              (k.length === 1 && k >= 'A' && k <= 'Z')) {
+              if (!this.curr.editing) {
+                this.curr.editing = true
+                this.curr.focus2 = false
+                this.curr.val = k
+              }
+            }
         }
+      },
+      onChangeStartDate (v) {
+        this.bill.startDate = v
+      },
+      onChangeEndDate (v) {
+        this.bill.endDate = v
       }
     }
   }
