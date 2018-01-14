@@ -1,6 +1,6 @@
 <template>
     <div :class="{cell:true,editing:isEditing,active:isActive}"
-         @click="click" @dblclick="dblclick" :style="{width:`${width}em`}">
+         @click="click" @dblclick="dblclick">
         <div v-if="isActive && isEditing">
             <Select v-if="valHints" v-model="curr.val" filterable>
                 <Option v-for="h in valHints" :value="h" :key="h">{{ h }}</Option>
@@ -8,7 +8,7 @@
             <input v-else v-model="curr.val" @blur="" :class="valCssClass" v-focus2="curr.focus2"/>
         </div>
 
-        <div v-else :class="valCssClass">{{valFmt(finalVal)}}</div>
+        <div v-else :class="['val',valCssClass]">{{valFmt(finalVal)}}</div>
 
     </div>
 </template>
@@ -25,7 +25,6 @@
       val: {type: [String, Number, Function], default: null},
       i: {type: Number},
       j: {type: Number},
-      width: {type: Number},
       // like {i:3,j:5}
       curr: {type: Object, default: {}},
       row: {type: Object, default: {}},
@@ -66,6 +65,9 @@
     },
     methods: {
       click () {
+        if (this.i === this.curr.i && this.j === this.curr.j) {
+          return
+        }
         this.$emit('jumpToCell', this.i, this.j, false)
       },
       dblclick () {
@@ -92,7 +94,7 @@
 <style scoped lang="less">
     .cell {
         border-width: 0;
-        min-height: 20px;
+        min-height: 21px;
     }
 
     .cell.active {
@@ -109,6 +111,10 @@
         border-width: 0;
         width: 100%;
         background: rgb(255, 221, 213);
+    }
+
+    .val {
+        padding: 0 2px;
     }
 
     .txt {

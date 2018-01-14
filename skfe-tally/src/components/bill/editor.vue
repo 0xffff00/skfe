@@ -1,14 +1,18 @@
 <template>
     <div>
-        <div>
-            <label>客户名：</label>
-            <Input size="small"></Input>
-            <label>开始日期：</label>
-            <DatePicker size="small" type="date" placeholder="开始日期" v-model="bill.startDate"></DatePicker>
-            <label>结束日期：</label>
-            <DatePicker size="small" type="date" placeholder="结束日期" v-model="bill.endDate"></DatePicker>
-        </div>
-        <table>
+        <table @click="clearCurr">
+            <tr>
+                <td>客户：</td>
+                <td><input v-model="bill.mainBuyer"></td>
+                <td>对账日期：</td>
+                <td>
+                    <DatePicker size="small" type="date" placeholder="开始日期" v-model="bill.startDate"></DatePicker>
+                    至
+                    <DatePicker size="small" type="date" placeholder="结束日期" v-model="bill.endDate"></DatePicker>
+                </td>
+            </tr>
+        </table>
+        <table class="main">
             <thead>
             <tr>
                 <th>#</th>
@@ -23,15 +27,21 @@
             </thead>
             <tbody>
             <tr v-for="(deal,i) in bill.deals">
-                <td>{{i}}</td>
-                <td v-for="(c,j) in colDefs">
+                <td :style="{textAlign: 'center'}">{{i}}</td>
+                <td v-for="(c,j) in colDefs" :class="colDefs[j].css1">
                     <Cell :name="c.name" :type="c.type" :val="valOfColDefs[j]"
                           :i="i" :j="j" :curr="curr" :row="deal"
                           @jumpToCell="jumpToCell" :width="c.width" :editable="c.editable"></Cell>
                 </td>
-                <td>
-                    <a @click="insertRow(i)">add</a>
-                    <a @click="deleteRow(i)">del</a>
+                <td class="opt">
+                    <div>
+                        <a @click="insertRow(i)" title="插入一行，紧随其后">
+                            <Icon type="plus-circled" color="green"></Icon>
+                        </a>
+                        <a @click="deleteRow(i)" title="删除此行">
+                            <Icon type="minus-circled" color="red"></Icon>
+                        </a>
+                    </div>
                 </td>
             </tr>
             </tbody>
@@ -45,6 +55,7 @@
                 <th class="cny">{{rowZ.borrow}}</th>
                 <th class="cny">{{rowZ.lend}}</th>
                 <th class="cny">{{rowZ.balance}}</th>
+                <td class="opt"></td>
             </tr>
             </tfoot>
         </table>
@@ -54,21 +65,21 @@
   import { merge, clone } from 'ramda'
   import moment from 'moment'
   import Cell from './cell.vue'
-  import { fmtCNY, fmtDefault, defaultRow, today } from './util'
+  import { fmtCNY, fmtDefault, defaultRow, defaultCurr, today } from './util'
 
   export default {
     components: {Cell},
     data: () => ({
-      curr: {i: null, j: null, editing: false, focus2: true},
-      row0: defaultRow,
+      // focus2:
+      curr: clone(defaultCurr),
       colDefs: [
-        {name: 'makeDate', type: 'date', width: 8},
-        {name: 'desc', type: 'txt', width: 15},
-        {name: 'price', type: 'CNY', width: 8},
-        {name: 'volume', type: 'num', width: 6},
-        {name: 'borrow', type: 'CNY', width: 8},
-        {name: 'lend', type: 'CNY', width: 8},
-        {name: 'balance', type: 'CNY', width: 8, editable: false}
+        {name: 'date', type: 'date', css1: 'date'},
+        {name: 'desc', type: 'txt', css1: 'desc'},
+        {name: 'price', type: 'CNY', css1: 'cny'},
+        {name: 'volume', type: 'num', css1: 'volume'},
+        {name: 'borrow', type: 'CNY', css1: 'cny'},
+        {name: 'lend', type: 'CNY', css1: 'cny'},
+        {name: 'balance', type: 'CNY', css1: 'cny', editable: false}
       ],
       descHints: ['304', '201', '202', '收到汇款', '开票']
     }),
@@ -97,16 +108,21 @@
         return moment(this.bill.endDate).format('YYYY-MM-DD')
       },
       rowZ () {
-        if (!this.bill.deals.length) return {}
+        if (!this.bill.deals || !this.bill.deals.length) return {}
         let res = this.bill.deals
           .map(d => ({volume: d.volume || 0, amount: d.amount || 0}))
+          .map(d => ({
+            volume: d.volume,
+            borrow: d.amount < 0 ? -d.amount : 0,
+            lend: d.amount > 0 ? d.amount : 0
+          }))
           .reduce((s, a) => ({
             volume: s.volume + a.volume,
-            borrow: s.amount < 0 ? -s.amount : 0,
-            lend: s.amount > 0 ? s.amount : 0
-          }), 0)
+            borrow: s.borrow + a.borrow,
+            lend: s.lend + a.lend
+          }), {volume: 0, borrow: 0, lend: 0})
         return {
-          makeDate: this.bill.endDate,
+          date: this.bill.endDate,
           desc: '总计',
           borrow: fmtCNY(res.borrow),
           lend: fmtCNY(res.lend),
@@ -180,7 +196,7 @@
         if (!this.curr.editing) return
         this.curr.editing = false
         const colName = this.colDefs[this.curr.j].name
-        if (colName === 'makeDate') {
+        if (colName === 'date') {
           this.curr.val = guessDate(this.curr.val)
         }
         this.setVal(this.curr.i, this.curr.j, this.curr.val)
@@ -197,6 +213,11 @@
         if (this.colDefs[this.curr.j].editable === false) return
         if (this.curr.editing) return
         this.curr.editing = true
+      },
+      clearCurr () {
+        this.finishEditCurrCell()
+        this.curr = clone(defaultCurr)
+        console.log(111, this.curr)
       },
       insertRow (i) {
         this.bill.deals.splice(i + 1, 0, clone(defaultRow))
@@ -289,26 +310,78 @@
   }
 </script>
 <style scoped lang="less">
-    table {
-        tfoot {
-            border-top: double;
-        }
+    table.main {
         font-size: 10pt;
-        border: solid 1px;
         border-spacing: 0;
         border-collapse: collapse;
 
         th {
-            border: solid 1px grey;
+            border: solid 1px black;
         }
         td {
-            border: solid 1px grey;
+            border: solid 1px black;
+        }
+        td.opt {
+            border-width: 0;
         }
         td.editing {
             border: solid 2px black;
         }
         .cny {
             text-align: right;
+        }
+        tfoot {
+            th {
+                border-top: double;
+                min-height: 20px;
+                padding: 0 2px;
+            }
+        }
+
+    }
+
+    @media screen {
+        table.main {
+            td.opt {
+                display: block;
+            }
+            td.date {
+                width: 80px;
+                text-align: center;
+            }
+            td.desc {
+                min-width: 240px;
+                max-width: 400px;
+            }
+            td.volume {
+                width: 70px;
+            }
+            td.cny {
+                width: 120px;
+            }
+        }
+    }
+
+    @media print {
+        table.main {
+            td.opt {
+                display: none;
+            }
+            td.date {
+                width: 80px;
+                text-align: center;
+            }
+            td.desc {
+                max-width: 240px;
+            }
+            td.volume {
+                max-width: 70px;
+            }
+            td.cny {
+                min-width: 80px;
+                max-width: 120px;
+            }
+
         }
     }
 </style>
