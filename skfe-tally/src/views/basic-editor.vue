@@ -1,7 +1,8 @@
 <template>
     <div>
         <div class="opt-pane">
-            <Button @click="save">保存</Button>
+            <Button type="primary" @click="saveMe">保存</Button>
+            <Button type="warning" @click="printMe">打印</Button>
         </div>
         <Editor :bill.sync="bill"></Editor>
     </div>
@@ -45,7 +46,7 @@
           self.bill.endDate = today()
         }
       },
-      save () {
+      saveMe () {
         const self = this
         // fill bill props
         self.bill.id = self.billId ? self.billId : Date.now()
@@ -58,23 +59,29 @@
             self.$router.push({name: 'BillEditor', params: {billId: self.bill.id}})
           }
         })
+      },
+      printMe () {
+        window.print()
       }
     }
   }
 </script>
 <style lang="less">
-    @media screen{
+    @media screen {
         .ivu-menu {
             display: block;
         }
+
         .opt-pane {
             display: block;
         }
     }
+
     @media print {
         .ivu-menu {
             display: none;
         }
+
         .opt-pane {
             display: none;
         }

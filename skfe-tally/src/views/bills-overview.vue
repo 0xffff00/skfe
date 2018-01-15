@@ -3,8 +3,8 @@
         <table>
             <tr>
                 <th>客户</th>
-                <th>账单总数</th>
-                <th>交易笔数</th>
+                <th>录入账单数</th>
+                <th>录入交易笔数</th>
                 <th>当前结欠</th>
             </tr>
             <tr v-for="cbb in countByBuyer">

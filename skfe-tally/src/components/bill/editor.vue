@@ -217,7 +217,6 @@
       clearCurr () {
         this.finishEditCurrCell()
         this.curr = clone(defaultCurr)
-        console.log(111, this.curr)
       },
       insertRow (i) {
         this.bill.deals.splice(i + 1, 0, clone(defaultRow))

@@ -1,12 +1,22 @@
-import currency from 'currency.js'
 import moment from 'moment'
 import { merge, clone } from 'ramda'
 
 const fmtDefault = x => x
 const fmtCNY = (num) => {
-  if (num === null || num === undefined) return null
-  if (num === '') return ''
-  return currency(num).format()
+  if (num === null || num === undefined) return ''
+  if (typeof num !== 'number') return num
+  let lt0 = num < 0
+  let s = String(Math.abs(num).toFixed(2))
+  let xDot = s.lastIndexOf('.')
+  let n = s.length
+  let res = ''
+  for (let i = 0; i < xDot - 1; i++) {
+    res += s[i]
+    if ((xDot - i) % 3 === 1) res += ','
+  }
+  for (let i = xDot - 1; i < n; i++) res += s[i]
+  res = (lt0 ? '-' : '') + res
+  return res
 }
 const defaultRow = {
   date: null,
