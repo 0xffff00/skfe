@@ -342,6 +342,7 @@
     @media screen {
         table.main {
             td.opt {
+                width: 30px;
                 display: block;
             }
             td.date {

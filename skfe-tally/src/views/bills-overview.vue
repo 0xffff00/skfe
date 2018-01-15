@@ -11,7 +11,7 @@
                 <td><a @click="showModal1(cbb.buyer)">{{cbb.buyer}}</a></td>
                 <td>{{cbb.bill_cnt}}</td>
                 <td>{{cbb.deal_cnt}}</td>
-                <td>{{cbb.latest_balance}}</td>
+                <td>{{fmtCNY(cbb.latest_balance)}}</td>
             </tr>
         </table>
         <Modal v-model="modal1.visible" :title="modal1.buyer+'的所有账单'">
@@ -26,6 +26,7 @@
 </template>
 <script>
   import TallyApi from '../apis/TallyApi'
+  import { fmtCNY } from '../components/bill/util'
 
   export default {
     data: () => ({
@@ -53,28 +54,14 @@
           vm.modal1.buyer = buyer
           vm.modal1.visible = true
         })
-      }
+      },
+      fmtCNY
     }
   }
 </script>
 <style scoped lang="less">
     table {
-        border: solid 1px;
-        border-spacing: 0;
-        font-size: 14pt;
-        border-collapse: collapse;
-        width: 100%;
-        th {
-            border: solid 1px grey;
-        }
-        td {
-            border: solid 1px grey;
-        }
-
-    }
-</style>
-<style scoped lang="less">
-    table {
+        text-align: right;
         border: solid 1px;
         border-spacing: 0;
         font-size: 14pt;
