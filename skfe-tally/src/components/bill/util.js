@@ -41,4 +41,6 @@ const defaultBill = {
 }
 const today = () => moment().format('YYYY-MM-DD')
 
-export { fmtCNY, fmtDefault, defaultRow, defaultKeyRow, defaultCurr, defaultBill, today }
+const isoDate2cn = s => moment(s).format('YYYY年MM月DD日')
+
+export { fmtCNY, fmtDefault, defaultRow, defaultKeyRow, defaultCurr, defaultBill, today, isoDate2cn }

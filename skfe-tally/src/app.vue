@@ -92,6 +92,7 @@
     }
 
     #skfe-app-main {
+        min-height: 100vh;
     }
 
     #skfe-app-content {

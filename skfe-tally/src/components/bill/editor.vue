@@ -1,26 +1,22 @@
 <template>
     <div>
-        <table @click="clearCurr">
+        <table class="head-editor" @click="clearCurr">
             <tr>
-                <td>客户：</td>
                 <td>
                     <slot name="input-buyer">
-                    <Input size="small" v-model="bill.mainBuyer"></Input>
+                        致(收货方)：
+                        <Input size="small" v-model="bill.mainBuyer"></Input>
+                        结算日期：
+                        <DatePicker size="small" type="date" placeholder="开始日期" :value="bill.startDate"
+                                    @on-change="onChangeStartDate"></DatePicker>
+                        至
+                        <DatePicker size="small" type="date" placeholder="结束日期" :value="bill.endDate"
+                                    @on-change="onChangeEndDate"></DatePicker>
                     </slot>
                 </td>
-                <td>对账日期：</td>
-                <td>
-                    <DatePicker size="small" type="date" placeholder="开始日期" v-model="bill.startDate"></DatePicker>
-                    至
-                    <DatePicker size="small" type="date" placeholder="结束日期" v-model="bill.endDate"></DatePicker>
-                </td>
             </tr>
         </table>
-        <table>
-            <tr>
-                <td>客户：</td><td><span>{{bill.mainBuyer}}</span></td>
-            </tr>
-        </table>
+
         <table class="main">
             <thead>
             <tr>
@@ -74,7 +70,7 @@
   import { merge, clone } from 'ramda'
   import moment from 'moment'
   import Cell from './cell.vue'
-  import { fmtCNY, fmtDefault, defaultRow, defaultCurr, today } from './util'
+  import { fmtCNY, fmtDefault, defaultRow, defaultCurr, today, isoDate2cn } from './util'
 
   export default {
     components: {Cell},
@@ -330,6 +326,24 @@
   }
 </script>
 <style scoped lang="less">
+    .head {
+        display: inline-block;
+        .bk {
+            font-weight: bold;
+        }
+        .bv {
+            span {
+                padding: 0 5px;
+                border-bottom: solid 1px black;
+                min-width: 10em;
+                display: inline-block;
+            }
+            margin-right: 1em;
+
+        }
+        margin: 15px 5px;
+    }
+
     table.main {
         font-size: 10pt;
         border-spacing: 0;
@@ -384,6 +398,10 @@
     }
 
     @media print {
+        table.head-editor {
+            display: none;
+        }
+
         table.main {
             td.opt {
                 display: none;
