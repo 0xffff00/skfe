@@ -31,7 +31,7 @@ const defaultCurr = {i: null, j: null, editing: false, focus2: true}
 const defaultBill = {
   id: null,
   mainSeller: 'DDSSP',
-  mainBuyer: null,
+  mainBuyer: '',
   startDate: null,
   endDate: null,
   baseBalance: 0,

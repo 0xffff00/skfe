@@ -3,13 +3,22 @@
         <table @click="clearCurr">
             <tr>
                 <td>客户：</td>
-                <td><input v-model="bill.mainBuyer"></td>
+                <td>
+                    <slot name="input-buyer">
+                    <Input size="small" v-model="bill.mainBuyer"></Input>
+                    </slot>
+                </td>
                 <td>对账日期：</td>
                 <td>
                     <DatePicker size="small" type="date" placeholder="开始日期" v-model="bill.startDate"></DatePicker>
                     至
                     <DatePicker size="small" type="date" placeholder="结束日期" v-model="bill.endDate"></DatePicker>
                 </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>客户：</td><td><span>{{bill.mainBuyer}}</span></td>
             </tr>
         </table>
         <table class="main">
@@ -81,10 +90,14 @@
         {name: 'lend', type: 'CNY', css1: 'cny'},
         {name: 'balance', type: 'CNY', css1: 'cny', editable: false}
       ],
-      descHints: ['304', '201', '202', '收到汇款', '开票']
+      descHints: ['304', '201', '202', '收到汇款', '开票'],
+      opts: {
+        buyers: []
+      }
     }),
     props: {
-      bill: {type: Object, default: {}}
+      bill: {type: Object, default: {}},
+      allBuyers: {type: Array, default: []}
     },
     computed: {
       valOfColDefs () {
@@ -131,9 +144,9 @@
       }
     },
     mounted () {
-      const self = this
+      const vm = this
       window.addEventListener('keyup', evt => {
-        self.onKeyPress(evt)
+        vm.onKeyPress(evt)
       })
     },
     methods: {
@@ -223,6 +236,14 @@
       },
       deleteRow (i) {
         this.bill.deals.splice(i, 1)
+      },
+      onFilterBuyersHints (q) {
+        const vm = this
+        vm.opts.buyers = vm.allBuyers.filter(b => {
+          if (!q) return true
+          let k = q.toUpperCase()
+          return b.hanzi.includes(k) || b.py1.includes(k) || b.py2.includes(k)
+        })
       },
       onKeyPress (evt) {
         const k = evt.key

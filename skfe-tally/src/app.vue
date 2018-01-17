@@ -3,7 +3,7 @@
         <Layout>
             <div id="skfe-app-menu0">
                 <Sider collapsible :collapsed-width="48" v-model="ui.siderCollapsed"
-                       :style="{minHeight: '100vh'}">
+                       :style="{minHeight: '100vh',position:'fixed'}">
                     <Menu active-name="1-2" theme="dark" width="auto" :class="">
                         <a href="/bills/0/edit" target="_blank">
                             <MenuItem name="3waa">
@@ -44,23 +44,25 @@
                     </Menu>
                 </Sider>
             </div>
-            <Layout>
-                <Content :class="['skfe-app-con']">
-                    <!--<Breadcrumb :style="{margin: '16px 0'}">-->
-                    <!--<BreadcrumbItem>Home</BreadcrumbItem>-->
-                    <!--<BreadcrumbItem>Components</BreadcrumbItem>-->
-                    <!--<BreadcrumbItem>Layout</BreadcrumbItem>-->
-                    <!--</Breadcrumb>-->
+            <div id="skfe-app-main">
+                <Layout>
+                    <Content id="skfe-app-content">
+                        <!--<Breadcrumb :style="{margin: '16px 0'}">-->
+                        <!--<BreadcrumbItem>Home</BreadcrumbItem>-->
+                        <!--<BreadcrumbItem>Components</BreadcrumbItem>-->
+                        <!--<BreadcrumbItem>Layout</BreadcrumbItem>-->
+                        <!--</Breadcrumb>-->
 
-                    <router-view></router-view>
+                        <router-view></router-view>
 
 
-                </Content>
-                <Footer :style="{textAlign:'center'}">
-                    © 2018 threebody.party
-                </Footer>
+                    </Content>
+                    <Footer id="skfe-app-footer">
+                        © 2018 threebody.party
+                    </Footer>
 
-            </Layout>
+                </Layout>
+            </div>
         </Layout>
     </div>
 </template>
@@ -84,14 +86,43 @@
 
 <style scoped lang="less">
 
-    .skfe-app-con{
+    @menu-width: 200px;
+    #skfe-app-menu0 {
+        width: @menu-width;
+    }
+
+    #skfe-app-main {
+    }
+
+    #skfe-app-content {
         background: white;
         margin: 5px;
         padding: 5px;
-        box-shadow: black;
+
     }
+
+    #skfe-app-footer {
+        text-align: center;
+        background: transparent;
+    }
+
+    @media screen {
+        #skfe-app-content {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+    }
+
     @media print {
+        #skfe-app-content {
+
+        }
+
         #skfe-app-menu0 {
+            display: none;
+        }
+
+        #skfe-app-footer {
             display: none;
         }
     }
