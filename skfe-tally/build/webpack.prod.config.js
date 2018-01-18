@@ -1,40 +1,43 @@
 const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const path = require('path')
 const merge = require('webpack-merge')
 const webpackBaseConfig = require('./webpack.base.config.js')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const globalConfig = require('./conf-util.js').fetchConfigByMergingEnvArgs({env: 'prod', args: process.env})
-
+const DIST = path.join(__dirname, '../dist')
 module.exports = merge(webpackBaseConfig, {
+  entry: {
+    main: './src/main',
+    skfe: ['skfe-ui'],
+    vendors: ['vue', 'vue-router'],
+    appconf: ['./src/conf/app.conf.json']
+    // vendors: './src/vendors'
+  },
   output: {
-    publicPath: '/dist/',
+    path: DIST,
+    // publicPath: '/dist/',
     filename: '[name].[hash].js',
     chunkFilename: '[name].[hash].chunk.js'
   },
   plugins: [
-    new ExtractTextPlugin({
-      filename: '[name].[hash].css',
-      allChunks: true
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendors',
-      filename: 'vendors.[hash].js'
+    new CleanWebpackPlugin(['dist'], {
+      root: path.join(__dirname, '../'), verbose: true, dry: false
     }),
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
+      'process.ENV0': JSON.stringify(process.env)
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    }),
+    // new CopyWebpackPlugin([
+    //   {from: path.join(__dirname, '../build/global-config.*.json'), to: DIST}
+    // ]),
+    new UglifyJsPlugin(),
     new HtmlWebpackPlugin({
-      filename: '../index_prod.html',
-      template: './index.html',
-      inject: false
+      filename: 'index.html',
+      template: 'index.html',
+      inject: true
     })
   ]
 })

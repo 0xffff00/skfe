@@ -1,12 +1,15 @@
 import EditorDemo from './examples/editor-demo.vue'
+import Hello1 from './examples/hello1.vue'
 import BillEditor from './views/basic-editor.vue'
 import BillMan from './views/bill-man.vue'
 import BillsOveriew from './views/bills-overview.vue'
+
 const routes = [
-  // {
-  //   path: '/',
-  //   component: TimeGridDemo
-  // },
+  {
+    path: '/',
+    name: 'Hello1',
+    component: Hello1
+  },
   {
     path: '/eg/editor-demo',
     component: EditorDemo,

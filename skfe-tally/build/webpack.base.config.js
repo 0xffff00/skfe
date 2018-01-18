@@ -37,6 +37,10 @@ module.exports = {
         loader: 'babel-loader'
       },
       {
+        test: /app\.conf\.json$/,
+        loader: 'json-loader'
+      },
+      {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/

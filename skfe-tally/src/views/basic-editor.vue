@@ -74,7 +74,7 @@
 </template>
 
 <script>
-  import CONFIG from '../libs/config'
+  import CONFIG from '../conf'
   import { merge, clone } from 'ramda'
   import Editor from '../components/bill/editor.vue'
   import TallyApi from '../apis/TallyApi'

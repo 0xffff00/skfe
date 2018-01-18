@@ -1,4 +1,4 @@
-import config from '../libs/config'
+import config from '../conf'
 import { RestApi } from 'skfe-ui'
 
 const CTX = config.tallyApiUrl || ''

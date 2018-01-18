@@ -5,8 +5,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const webpackBaseConfig = require('./webpack.base.config.js')
 
-const globalConfig = require('./conf-util.js').fetchConfigByMergingEnvArgs({env: 'dev', args: process.env})
-
 module.exports = merge(webpackBaseConfig, {
   // 入口
   entry: {
@@ -29,14 +27,14 @@ module.exports = merge(webpackBaseConfig, {
   },
   devServer: {
     publicPath: '/',
-    port: globalConfig.port,
+    port: 8941,
     historyApiFallback: true,
     inline: true
   },
   plugins: [
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin({
-      'GLOBAL_CONFIG': JSON.stringify(globalConfig)
+      'process.ENV0': JSON.stringify(process.env)
     }),
     new webpack.optimize.CommonsChunkPlugin({
       names: ['comm1', 'skfe', 'vendors'],
@@ -44,7 +42,8 @@ module.exports = merge(webpackBaseConfig, {
       // filename: 'vendors.js'
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, '../index.html'),
+      filename: 'index.html',
+      template: 'index.html',
       inject: true
     }),
     new FriendlyErrorsPlugin()

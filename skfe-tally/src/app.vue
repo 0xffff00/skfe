@@ -5,6 +5,12 @@
                 <Sider collapsible :collapsed-width="48" v-model="ui.siderCollapsed"
                        :style="{minHeight: '100vh',position:'fixed'}">
                     <Menu active-name="1-2" theme="dark" width="auto" :class="">
+                        <router-link to="/">
+                            <MenuItem name="home">
+                                <Icon type="home"></Icon>
+                                首页
+                            </MenuItem>
+                        </router-link>
                         <a href="/bills/0/edit" target="_blank">
                             <MenuItem name="3waa">
                                 <Icon type="plus"></Icon>
