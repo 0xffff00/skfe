@@ -13,7 +13,7 @@
     "dev": "webpack-dev-server --content-base ./ --open --inline --hot --compress --config build/webpack.dev.config.js",
     "p1": "webpack-dev-server --content-base ./ --open --inline --hot --compress --config build/webpack.prod.config.js",
     "dist:dev": "webpack --progress --hide-modules --config build/webpack.dist.dev.config.js",
-    "p1b": "webpack --progress  --config build/webpack.prod.config.js",
+    "p1b": "webpack --progress -p --config build/webpack.prod.config.js",
     "lint": "eslint --fix --ext .js,.vue src"
   },
   "repository": {

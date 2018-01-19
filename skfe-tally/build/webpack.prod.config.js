@@ -9,12 +9,14 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const DIST = path.join(__dirname, '../dist')
+
+process.env.NODE_ENV = '"production"'
 module.exports = merge(webpackBaseConfig, {
   entry: {
     main: './src/main',
     skfe: ['skfe-ui'],
-    vendors: ['vue', 'vue-router'],
-    appconf: ['./src/conf/app.conf.json']
+    vendors: ['vue', 'vue-router']
+    // appconf: ['./src/conf/app.conf.js']
     // vendors: './src/vendors'
   },
   output: {
@@ -30,13 +32,13 @@ module.exports = merge(webpackBaseConfig, {
     new webpack.DefinePlugin({
       'process.ENV0': JSON.stringify(process.env)
     }),
-    // new CopyWebpackPlugin([
-    //   {from: path.join(__dirname, '../build/global-config.*.json'), to: DIST}
-    // ]),
+    new CopyWebpackPlugin([
+      {from: path.join(__dirname, '../src/conf/app.conf.js'), to: DIST}
+    ]),
     new UglifyJsPlugin(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: 'index.html',
+      template: 'src/index-p1.html',
       inject: true
     })
   ]

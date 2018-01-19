@@ -43,7 +43,7 @@ module.exports = merge(webpackBaseConfig, {
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: 'index.html',
+      template: 'src/index.html',
       inject: true
     }),
     new FriendlyErrorsPlugin()
