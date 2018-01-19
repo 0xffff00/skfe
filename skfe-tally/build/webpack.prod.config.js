@@ -21,7 +21,7 @@ module.exports = merge(webpackBaseConfig, {
   },
   output: {
     path: DIST,
-    // publicPath: '/dist/',
+    publicPath: '/',
     filename: '[name].[hash].js',
     chunkFilename: '[name].[hash].chunk.js'
   },

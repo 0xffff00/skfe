@@ -14,7 +14,7 @@
                 <p>&nbsp;&nbsp;&nbsp;&nbsp;据我方记录,与贵司发生于
                     <span class="date">{{isoDate2cn(bill.startDate)}}</span>至
                     <span class="date">{{isoDate2cn(bill.endDate)}}</span>
-                    往来账款明细如下：
+                    的往来账款明细如下：
                 </p>
             </div>
         </div>
@@ -34,7 +34,7 @@
                         至
                         <DatePicker size="small" type="date" placeholder="结束日期" :value="bill.endDate"
                                     @on-change="onChangeEndDate"></DatePicker>
-                        往来账款明细如下：
+                        的往来账款明细如下：
                     </p>
                 </div>
             </Editor>
