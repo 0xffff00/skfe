@@ -97,14 +97,16 @@
         min-height: 21px;
     }
 
-    .cell.active {
-        border: solid 1px #01112f;
-        background: rgba(174, 223, 172, .5);
-    }
+    @media screen{
+        .cell.active {
+            border: solid 1px #01112f;
+            background: rgba(174, 223, 172, .5);
+        }
 
-    .cell.editing {
-        border: dashed 1px #01112f;
+        .cell.editing {
+            border: dashed 1px #01112f;
 
+        }
     }
 
     input {

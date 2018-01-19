@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import iView from 'iview'
 import VueRouter from 'vue-router'
 import Routes from './routes'
 
@@ -8,6 +7,7 @@ import 'iview/dist/styles/iview.css'
 import 'skfe-ui/dist/main.css'
 import 'font-awesome/css/font-awesome.css'
 
+const iView = require('iview')
 Vue.use(VueRouter)
 Vue.use(iView)
 

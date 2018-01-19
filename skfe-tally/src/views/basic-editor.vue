@@ -149,6 +149,7 @@
         })
       },
       printMe () {
+        this.saveMe()
         window.print()
       },
       selectBuyer (buyer) {

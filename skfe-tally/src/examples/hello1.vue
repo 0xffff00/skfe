@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>{{text1}}</h1>
-        <img src="../assets/fdmh1.png">
+        <!--<img src="../assets/fdmh1.png">-->
         <hr>
         <pre>{{procEnv}}</pre>
     </div>
@@ -12,7 +12,7 @@
 
   export default {
     data: () => ({
-      text1: 'Hello World',
+      text1: 'Welcome to Zkit Tally',
       procEnv: JSON.stringify(Conf, 0, 2)
     }),
     created () {

@@ -243,7 +243,7 @@
       },
       onKeyPress (evt) {
         const k = evt.key
-        console.log(evt)
+        // console.log(evt)
         let i = this.curr.i
         let j = this.curr.j
         if (i === null) return
