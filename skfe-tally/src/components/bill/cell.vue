@@ -97,7 +97,7 @@
         min-height: 21px;
     }
 
-    @media screen{
+    @media screen {
         .cell.active {
             border: solid 1px #01112f;
             background: rgba(174, 223, 172, .5);
@@ -130,5 +130,11 @@
     .cny {
         color: #222;
         text-align: right;
+    }
+
+    @media print {
+        .cny {
+            color: black;
+        }
     }
 </style>

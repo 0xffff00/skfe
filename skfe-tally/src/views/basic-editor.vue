@@ -149,6 +149,8 @@
         })
       },
       printMe () {
+        let p = this.$route.path
+        window.history.pushState(null, null, 'xxxx')
         this.saveMe()
         window.print()
       },
@@ -198,6 +200,7 @@
     }
 
     .bill-foot {
+        page-break-inside: avoid;
         p {
             margin: 4px 0;
         }
@@ -257,5 +260,10 @@
         .opt-pane {
             display: none;
         }
+    }
+
+    @page {
+        size: auto;
+        margin-bottom: 5mm;
     }
 </style>

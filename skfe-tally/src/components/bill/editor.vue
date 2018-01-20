@@ -365,6 +365,7 @@
             text-align: right;
         }
         tfoot {
+            display: table-row-group;
             th {
                 border-top: double;
                 min-height: 20px;
@@ -403,6 +404,8 @@
         }
 
         table.main {
+            color: black;
+            border-color: black;
             td.opt {
                 display: none;
             }
