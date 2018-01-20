@@ -15,9 +15,8 @@ module.exports = merge(webpackBaseConfig, {
   entry: {
     main: './src/main',
     skfe: ['skfe-ui'],
-    vendors: ['vue', 'vue-router']
-    // appconf: ['./src/conf/app.conf.js']
-    // vendors: './src/vendors'
+    'vues': ['vue', 'vue-router', 'iview'],
+    'comm1': ['axios', 'ramda']
   },
   output: {
     path: DIST,
@@ -31,6 +30,15 @@ module.exports = merge(webpackBaseConfig, {
     }),
     new webpack.DefinePlugin({
       'process.ENV0': JSON.stringify(process.env)
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'skfe', chunks: ['main'], minChunks: Infinity
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vues', chunks: ['main', 'skfe'], minChunks: Infinity
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'comm1', chunks: ['main', 'skfe', 'vues'], minChunks: Infinity
     }),
     new CopyWebpackPlugin([
       {from: path.join(__dirname, '../src/conf/app.conf.js'), to: DIST}
