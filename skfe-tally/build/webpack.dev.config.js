@@ -13,6 +13,7 @@ module.exports = merge(webpackBaseConfig, {
   },
   devServer: {
     publicPath: '/',
+    host: '0.0.0.0',
     port: 8941,
     historyApiFallback: true,
     inline: true

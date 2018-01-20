@@ -28,11 +28,8 @@ module.exports = [
   },
   {
     test: /iview\/.*?js$/,
-    loader: 'babel-loader'
-  },
-  {
-    test: /app\.conf\.json$/,
-    loader: 'json-loader'
+    loader: 'babel-loader',
+    exclude: /node_modules/
   },
   {
     test: /\.js$/,
