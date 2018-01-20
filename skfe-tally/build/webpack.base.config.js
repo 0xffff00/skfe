@@ -1,75 +1,10 @@
 const path = require('path')
 const webpack = require('webpack')
+const rules = require('./rules.config.js')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-
 module.exports = {
-
   module: {
-    rules: [
-      {
-        test: /.vue$/,
-        use: [
-          {
-            loader: 'vue-loader',
-            options: {
-              loaders: {
-                less: ExtractTextPlugin.extract({
-                  use: ['css-loader?minimize', 'postcss-loader', 'less-loader'],
-                  fallback: 'vue-style-loader'
-                }),
-                css: ExtractTextPlugin.extract({
-                  use: ['css-loader', 'postcss-loader', 'less-loader'],
-                  fallback: 'vue-style-loader'
-                })
-              }
-            }
-          },
-          {
-            loader: 'iview-loader',
-            options: {
-              prefix: false
-            }
-          }
-        ]
-      },
-      {
-        test: /iview\/.*?js$/,
-        loader: 'babel-loader'
-      },
-      {
-        test: /app\.conf\.json$/,
-        loader: 'json-loader'
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          use: ['css-loader?minimize', 'postcss-loader'],
-          fallback: 'style-loader'
-        })
-      },
-
-      {
-        test: /\.less/,
-        use: ExtractTextPlugin.extract({
-          use: ['postcss-loader', 'less-loader'],
-          fallback: 'style-loader'
-        })
-      },
-
-      {
-        test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/,
-        loader: 'url-loader?limit=1024'
-      },
-      {
-        test: /\.(html|tpl)$/,
-        loader: 'html-loader'
-      }
-    ]
+    rules: rules
   },
   resolve: {
     extensions: ['.js', '.vue'],
@@ -77,7 +12,37 @@ module.exports = {
       'vue': 'vue/dist/vue.esm.js'
     }
   },
+  // 入口
+  entry: {
+    main: './src/main',
+    comm1: ['axios', 'ramda', 'moment'],
+    vue2: ['vue', 'vue-router'],
+    ivu2: ['iview']
+  },
+  // 输出
+  output: {
+    path: path.join(__dirname, '../dist'),
+    filename: '[name].js',
+    chunkFilename: '[name].chunk.js',
+    publicPath: '/'
+  },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.ENV0': JSON.stringify(process.env)
+    }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'skfe', chunks: ['main'], minChunks: Infinity
+    // }),
+    //
+    new webpack.optimize.CommonsChunkPlugin({
+      names: ['comm1'], chunks: ['main', 'vue2', 'ivu2']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'ivu2', chunks: ['main']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vue2', chunks: ['ivu2']
+    }),
 
     new ExtractTextPlugin({
       filename: '[name].css',
