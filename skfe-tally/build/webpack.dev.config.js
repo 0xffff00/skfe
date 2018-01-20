@@ -20,6 +20,9 @@ module.exports = merge(webpackBaseConfig, {
   },
   plugins: [
     new webpack.NamedModulesPlugin(),
+    new webpack.DefinePlugin({
+      'process.ENV0': JSON.stringify(process.env)
+    }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/index.html',

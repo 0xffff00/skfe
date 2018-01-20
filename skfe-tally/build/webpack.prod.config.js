@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 const merge = require('webpack-merge')
 const webpackBaseConfig = require('./webpack.base.config.js')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -17,7 +18,9 @@ module.exports = merge(webpackBaseConfig, {
     new CleanWebpackPlugin(['dist'], {
       root: path.join(__dirname, '../'), verbose: true, dry: false
     }),
-
+    new webpack.DefinePlugin({
+      'process.ENV0': JSON.stringify(process.env)
+    }),
     new CopyWebpackPlugin([
       {
         from: path.join(__dirname, '../src/conf/app.conf.js'),

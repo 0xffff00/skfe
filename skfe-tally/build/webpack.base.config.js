@@ -27,9 +27,6 @@ module.exports = {
     publicPath: '/'
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.ENV0': JSON.stringify(process.env)
-    }),
     // new webpack.optimize.CommonsChunkPlugin({
     //   name: 'skfe', chunks: ['main'], minChunks: Infinity
     // }),
