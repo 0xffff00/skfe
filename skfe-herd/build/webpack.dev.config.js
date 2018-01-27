@@ -5,23 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const webpackBaseConfig = require('./webpack.base.config.js')
 
-const globalConfig = require('./conf-util.js').fetchConfigByMergingEnvArgs({env: 'dev', args: process.env})
-
 module.exports = merge(webpackBaseConfig, {
-  // 入口
-  entry: {
-    main: './src/main',
-    skfe: ['skfe-ui', 'skfe-dict'],
-    vendors: ['vue', 'vue-router']
-    // vendors: './src/vendors'
-  },
-  // 输出
-  output: {
-    path: path.join(__dirname, '../dist'),
-    filename: '[name].js',
-    chunkFilename: '[name].chunk.js',
-    publicPath: '/'
-  },
   // devtool: '#source-map',
   devtool: '#cheap-module-eval-source-map',
   node: {
@@ -29,22 +13,19 @@ module.exports = merge(webpackBaseConfig, {
   },
   devServer: {
     publicPath: '/',
-    port: globalConfig.port,
+    host: '0.0.0.0',
+    port: 8931,
     historyApiFallback: true,
     inline: true
   },
   plugins: [
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin({
-      'GLOBAL_CONFIG': JSON.stringify(globalConfig)
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['comm1', 'skfe', 'vendors'],
-      minChunks: 3 // Infinity
-      // filename: 'vendors.js'
+      'process.ENV0': JSON.stringify(process.env)
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, '../index.html'),
+      filename: 'index.html',
+      template: 'src/index.html',
       inject: true
     }),
     new FriendlyErrorsPlugin()

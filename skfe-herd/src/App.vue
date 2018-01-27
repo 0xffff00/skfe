@@ -9,10 +9,16 @@
                         首页
                     </MenuItem>
                 </router-link>
-                <router-link to="/album">
-                    <MenuItem name="/album">
+                <router-link to="/album2">
+                    <MenuItem name="/album2">
                         <Icon type="images"></Icon>
-                        相册
+                        相册v2
+                    </MenuItem>
+                </router-link>
+                <router-link to="/album3">
+                    <MenuItem name="/album3">
+                        <Icon type="images"></Icon>
+                        相册v3
                     </MenuItem>
                 </router-link>
                 <router-link to="/repo-man">

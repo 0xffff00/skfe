@@ -33,7 +33,7 @@
   </TableMan>
 </template>
 <script>
-  import dictApi from '../apis/dict-api'
+  import dictApi from '../apis/DictApi'
   import Dates from '../utils/Dates'
   import TextUtils from '../utils/Texts'
   import Arrays from '../utils/Arrays'

@@ -1,5 +1,5 @@
-import config from '../libs/config'
-import {RestApi} from 'skfe-ui'
+import config from '../conf'
+import { RestApi } from 'skfe-ui'
 
 const CTX = config.herdApiUrl
 
@@ -22,7 +22,8 @@ const jobs = {
   batchSync: {
     start: params => RestApi.of(CTX + '/jobs/batch-sync', '?repoName={repoName}').putting(params, null),
     status: RestApi.of(CTX + '/jobs/batch-sync/status').getting(null),
-    statusAll: RestApi.of(CTX + '/jobs/batch-sync/status/all').getting(null)
+    statusAll: RestApi.of(CTX + '/jobs/batch-sync/status/all').getting(null),
+    releaseLock: RestApi.of(CTX + '/jobs/batch-sync/release-lock').deleting(null)
   },
   thumbnail: {
     start: params => RestApi.of(CTX + '/jobs/batch-sync', '?repoName={repoName}').getting(params),
@@ -33,10 +34,15 @@ const jobs = {
   }
 }
 
+const res = {
+  raw: path => `${config.resUri}/RAW${path}`,
+  tn: cate => hash => `${config.resUri}/TN/${cate}/${hash}.jpg`
+}
 export default {
   getUrlByHash,
   mediaFiles,
   imageInfos,
   mediaRepos,
-  jobs
+  jobs,
+  res
 }

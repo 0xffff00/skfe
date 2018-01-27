@@ -84,8 +84,8 @@
 <script>
   import _ from 'lodash'
   import moment from 'moment'
-  import herdApi from '../apis/herd-api'
-  import dictApi from '../apis/dict-api'
+  import herdApi from '../apis/HerdApi'
+  import dictApi from '../apis/DictApi'
   import Dates from '../utils/Dates'
   import Texts from '../utils/Texts'
   import Arrays from '../utils/Arrays'

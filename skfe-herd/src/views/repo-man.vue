@@ -4,21 +4,23 @@
                   :querier="querier">
             <div slot="criteria-pane">
                 <Button @click="batchSync.startHeartbeatTick++">查看当前任务</Button>
+                <Button @click="releaseRepoSyncLock()">释放RepoSync锁</Button>
             </div>
+
         </TableMan>
         <AsyncProgressBox name="同步媒体库" :apis="batchSync.apis"
-        :params="batchSync.params"
-        :start-tick="batchSync.startTick"
-        :start-heartbeat-tick="batchSync.startHeartbeatTick">
+                          :params="batchSync.params"
+                          :start-tick="batchSync.startTick"
+                          :start-heartbeat-tick="batchSync.startHeartbeatTick">
         </AsyncProgressBox>
     </div>
 </template>
 <script>
-  import herdApi from '../apis/herd-api'
+  import herdApi from '../apis/HerdApi'
   import Dates from '../utils/Dates'
   import TextUtils from '../utils/Texts'
   import Arrays from '../utils/Arrays'
-  import { AsyncProgressBox, TableMan } from 'skfe-ui'
+  import { AsyncProgressBox, TableMan, MsgBox } from 'skfe-ui'
 
   export default {
     components: {TableMan, AsyncProgressBox},
@@ -131,6 +133,9 @@
             self.msgBox.show(resp2)
           }
         })
+      },
+      releaseRepoSyncLock () {
+        herdApi.jobs.batchSync.releaseLock(MsgBox.open(this, '释放锁'))
       }
     }
   }

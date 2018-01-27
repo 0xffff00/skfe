@@ -1,40 +1,37 @@
+const path = require('path')
 const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const merge = require('webpack-merge')
 const webpackBaseConfig = require('./webpack.base.config.js')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const globalConfig = require('./conf-util.js').fetchConfigByMergingEnvArgs({env: 'prod', args: process.env})
-
+process.env.NODE_ENV = '"production"'
 module.exports = merge(webpackBaseConfig, {
   output: {
-    publicPath: '/dist/',
+    publicPath: '/',
     filename: '[name].[hash].js',
     chunkFilename: '[name].[hash].chunk.js'
   },
   plugins: [
-    new ExtractTextPlugin({
-      filename: '[name].[hash].css',
-      allChunks: true
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendors',
-      filename: 'vendors.[hash].js'
+    new CleanWebpackPlugin(['dist'], {
+      root: path.join(__dirname, '../'), verbose: true, dry: false
     }),
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
+      'process.ENV0': JSON.stringify(process.env)
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
+    new CopyWebpackPlugin([
+      {
+        from: path.join(__dirname, '../src/conf/app.conf.js'),
+        to: path.join(__dirname, '../dist')
       }
-    }),
+    ]),
+    new UglifyJsPlugin(),
     new HtmlWebpackPlugin({
-      filename: '../index_prod.html',
-      template: '../index.html',
-      inject: false
+      filename: 'index.html',
+      template: 'src/index-p1.html',
+      inject: true
     })
   ]
 })

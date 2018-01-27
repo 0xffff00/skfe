@@ -10,8 +10,9 @@
   ],
   "scripts": {
     "init": "webpack --progress --config conf/webpack.dev.config.js",
-    "dev": "webpack-dev-server --content-base ./ --open --inline --hot --compress --config build/webpack.dev.config.js",
-    "build": "webpack --progress --hide-modules --config build/webpack.prod.config.js",
+    "dd": "webpack-dev-server --content-base ./ --inline --hot --compress --config build/webpack.dev.config.js",
+    "dd2": "webpack-dev-server --content-base ./ --inline --hot --compress --config build/webpack.dev.config.js",
+    "bp": "webpack --progress --hide-modules --config build/webpack.prod.config.js",
     "lint": "eslint --fix --ext .js,.vue src"
   },
   "repository": {
@@ -23,7 +24,7 @@
     "axios": "^0.17.1",
     "iview": "2.8.0",
     "skfe-dict": "^0.2.0-0",
-    "skfe-ui": "^0.1.16",
+    "skfe-ui": "^0.1.21",
     "vue": "^2.5.13",
     "vue-router": "^3.0.1"
   },
@@ -34,7 +35,9 @@
     "babel-preset-env": "^1.3.2",
     "babel-preset-vue-app": "^1.3.0",
     "babel-runtime": "^6.11.6",
+    "clean-webpack-plugin": "^0.1.17",
     "compression-webpack-plugin": "^1.1.3",
+    "copy-webpack-plugin": "^4.3.1",
     "css-loader": "^0.28.7",
     "cssnano": "^3.10.0",
     "eslint": "^4.14.0",

@@ -1,6 +1,6 @@
 {
   "name": "skfe-ui",
-  "version": "0.1.21",
+  "version": "0.1.23",
   "description": "SkFE Project - UI",
   "author": "hzk <hzkchina@gmail.com>",
   "main": "dist/skfe-ui.js",
@@ -14,7 +14,8 @@
     "beg": "webpack --progress --hide-modules --config build/webpack.eg.dev.config.js",
     "bd": "webpack --progress --hide-modules --config build/webpack.dist.dev.config.js",
     "bp": "webpack --progress --hide-modules --config build/webpack.dist.prod.config.js",
-    "lint": "eslint --fix --ext .js,.vue src"
+    "lint": "eslint --fix --ext .js,.vue src",
+    "ppp": "npm run bd && npm run bp && npm version patch && npm publish"
   },
   "repository": {
     "type": "git",

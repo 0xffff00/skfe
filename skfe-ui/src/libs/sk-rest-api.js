@@ -110,8 +110,8 @@ const respond = callback => resp => {
     resp2.status = resp.status
     resp2.ok = isOk(resp.status)
     resp2.data = resp.data
-    const totalAffected = parseInt(resp.headers['X-Total-Affected']) || null
-    const totalCount = parseInt(resp.headers['X-Total-Count']) || null
+    const totalAffected = parseInt(resp.headers['x-total-affected']) || null
+    const totalCount = parseInt(resp.headers['x-total-count']) || null
     if (totalAffected) resp2.totalAffected = totalAffected
     if (totalCount) resp2.totalCount = totalCount
   }

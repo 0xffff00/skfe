@@ -1,4 +1,4 @@
-import herdService from '../apis/herd-api'
+import herdService from '../apis/HerdApi'
 import RestApi from '../utils/RestApiV1'
 
 console.log(herdService.repoCrudApi)
