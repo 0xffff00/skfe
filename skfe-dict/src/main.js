@@ -3,7 +3,7 @@ import iView from 'iview'
 import VueRouter from 'vue-router'
 import Routes from './routes'
 
-import App from './dict-app.vue'
+import App from './app.vue'
 import 'iview/dist/styles/iview.css'
 import 'skfe-ui/dist/main.css'
 import 'font-awesome/css/font-awesome.css'

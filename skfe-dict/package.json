@@ -10,9 +10,12 @@
   ],
   "scripts": {
     "init": "webpack --progress --config build/webpack.dev.config.js",
-    "dev": "webpack-dev-server --content-base ./ --open --inline --hot --compress --config build/webpack.dev.config.js",
-    "dist:dev": "webpack --progress --hide-modules --config build/webpack.dist.dev.config.js",
-    "dist:prod": "webpack --progress --hide-modules --config build/webpack.dist.prod.config.js",
+    "s-dd": "webpack-dev-server --content-base ./ --inline --hot --compress --config build/webpack.site.dev.config.js",
+    "s-bd": "webpack --progress --hide-modules --config build/webpack.site.dev.config.js",
+    "s-bp": "webpack --progress --hide-modules --config build/webpack.site.prod.config.js",
+    "bd": "webpack --progress --hide-modules --config build/webpack.dist.dev.config.js",
+    "bp": "webpack --progress --hide-modules --config build/webpack.dist.prod.config.js",
+    "ppp": "npm run bd && npm run bp && npm version patch && npm publish",
     "lint": "eslint --fix --ext .js,.vue src"
   },
   "repository": {
@@ -34,7 +37,9 @@
     "babel-preset-env": "^1.3.2",
     "babel-preset-vue-app": "^1.3.0",
     "babel-runtime": "^6.11.6",
+    "clean-webpack-plugin": "^0.1.17",
     "compression-webpack-plugin": "^1.1.3",
+    "copy-webpack-plugin": "^4.3.1",
     "css-loader": "^0.28.7",
     "cssnano": "^3.10.0",
     "eslint": "^4.14.0",
@@ -46,6 +51,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "eslint-plugin-vue": "^4.0.0-beta.3",
     "extract-text-webpack-plugin": "^3.0.2",
+    "favicons-webpack-plugin": "^0.0.7",
     "file-loader": "^1.1.5",
     "font-awesome": "^4.7.0",
     "friendly-errors-webpack-plugin": "^1.6.1",
