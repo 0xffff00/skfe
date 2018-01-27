@@ -72,8 +72,8 @@
    *  - query by criteria
    */
   import _ from 'lodash'
-  import Renders from './table-man-renders'
-  import MsgBox from '../libs/sk-ivu-msg-box'
+  import Renders from './renders'
+  import MsgBox from '../../libs/sk-ivu-msg-box'
 
   export default {
     name: 'table-man',

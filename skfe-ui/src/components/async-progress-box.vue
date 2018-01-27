@@ -1,6 +1,6 @@
 <template>
     <Modal v-model="ui.visible" :title="ui.title"
-           @on-cancel="ui.visible=false" :closable="true" :mask-closable="false">
+           @on-cancel="ui.visible=false">
         <Progress :percent="progressPercent" status="active"></Progress>
 
         <b>{{status.current}}/{{status.totalSteps}}</b>
@@ -97,7 +97,7 @@
       refreshStatus () {
         const self = this
         self.apis.status(resp2 => {
-          if (resp2.data && resp2.data.current) self.status = resp2.data
+          if (resp2.data) self.status = resp2.data
           if (!resp2.ok) {
             MsgBox.open(self, '获取任务进度')(resp2)
             self.failCnt++

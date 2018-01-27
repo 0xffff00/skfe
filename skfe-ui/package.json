@@ -1,6 +1,6 @@
 {
   "name": "skfe-ui",
-  "version": "0.1.16",
+  "version": "0.1.21",
   "description": "SkFE Project - UI",
   "author": "hzk <hzkchina@gmail.com>",
   "main": "dist/skfe-ui.js",
@@ -10,9 +10,10 @@
   ],
   "scripts": {
     "init": "webpack --progress --config build/webpack.dev.config.js",
-    "dev": "webpack-dev-server --content-base ./ --open --inline --hot --compress --config build/webpack.dev.config.js",
-    "dist:dev": "webpack --progress --hide-modules --config build/webpack.dist.dev.config.js",
-    "dist:prod": "webpack --progress --hide-modules --config build/webpack.dist.prod.config.js",
+    "deg": "webpack-dev-server --content-base ./ --inline --hot --compress --config build/webpack.eg.dev.config.js",
+    "beg": "webpack --progress --hide-modules --config build/webpack.eg.dev.config.js",
+    "bd": "webpack --progress --hide-modules --config build/webpack.dist.dev.config.js",
+    "bp": "webpack --progress --hide-modules --config build/webpack.dist.prod.config.js",
     "lint": "eslint --fix --ext .js,.vue src"
   },
   "repository": {

@@ -1,10 +1,18 @@
 const webpack = require('webpack')
-const merge = require('webpack-merge')
 const path = require('path')
 
-const webpackBaseConfig = require('./webpack.base.config.js')
-
-module.exports = merge(webpackBaseConfig, {
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const rules = require('./rules.config.js')
+module.exports = {
+  module: {
+    rules: rules
+  },
+  resolve: {
+    extensions: ['.js', '.vue'],
+    alias: {
+      'vue': 'vue/dist/vue.esm.js'
+    }
+  },
   entry: {
     main: './src/index.js'
   },
@@ -24,5 +32,10 @@ module.exports = merge(webpackBaseConfig, {
       amd: 'vue'
     }
   },
-  plugins: []
-})
+  plugins: [
+    new ExtractTextPlugin({
+      filename: '[name].css',
+      allChunks: true
+    })
+  ]
+}
