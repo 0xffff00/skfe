@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const webpackBaseConfig = require('./webpack.site.base.config.js')
 
+const appBuildConf = require('./app.build.conf')
 module.exports = merge(webpackBaseConfig, {
   // devtool: '#source-map',
   devtool: '#cheap-module-eval-source-map',
@@ -14,7 +15,7 @@ module.exports = merge(webpackBaseConfig, {
   devServer: {
     publicPath: '/',
     host: '0.0.0.0',
-    port: 8917,
+    port: appBuildConf.port || 8900,
     historyApiFallback: true,
     inline: true
   },

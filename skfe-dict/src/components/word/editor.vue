@@ -183,7 +183,7 @@
       },
       addX1R (name, attr, toE, v, rs0) {
         let arr2 = split(/\s+/)(v.trim()).map(s => split('^')(s))
-        console.log(rs0.map(r => r.no))
+        // console.log(rs0.map(r => r.no))
         let no = reduce(max, -Infinity, rs0.map(r => r.no)) + 1
         let rels = (toE === 'dst')
           ? arr2.map(a => merge(rs0[0])({dst: a[0], attrx: a[1], no: no++}))

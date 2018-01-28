@@ -8,6 +8,8 @@ import 'iview/dist/styles/iview.css'
 import 'skfe-ui/dist/main.css'
 import 'font-awesome/css/font-awesome.css'
 
+import appBuildConf from '../build/app.build.conf'
+
 Vue.use(VueRouter)
 Vue.use(iView)
 
@@ -23,7 +25,7 @@ const router = new VueRouter(RouterConfig)
 
 router.beforeEach((to, from, next) => {
   iView.LoadingBar.start()
-  window.document.title = (to.meta && to.meta.title) || 'SkFE Project'
+  window.document.title = (to.meta && to.meta.title) || appBuildConf.title || 'SkFE Project'
   next()
 })
 

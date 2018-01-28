@@ -1,6 +1,6 @@
 {
   "name": "skfe-dict",
-  "version": "0.2.0-0",
+  "version": "0.2.1",
   "description": "SkFE Project - Dict Site",
   "author": "hzk <hzkchina@gmail.com>",
   "main": "dist/skfe-dict.js",
