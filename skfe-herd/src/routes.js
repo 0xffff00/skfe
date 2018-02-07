@@ -1,12 +1,7 @@
-import Album2 from './views/album.vue'
 import Album3 from './views/album-v3.vue'
 import RepoMan from './views/repo-man.vue'
 
 const routes = [
-  {
-    path: '/album2',
-    component: Album2
-  },
   {
     path: '/album3',
     component: Album3
