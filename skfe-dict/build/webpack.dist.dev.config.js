@@ -1,3 +1,4 @@
+// ---- Static File of SkFE Archetype v0.1 ----
 const webpack = require('webpack')
 const path = require('path')
 
