@@ -1,3 +1,4 @@
+// ---- Static File of SkFE Archetype v0.1 ----
 import Vue from 'vue'
 import iView from 'iview'
 import VueRouter from 'vue-router'

@@ -1,7 +1,8 @@
+// ---- Static File of SkFE Archetype v0.1 ----
 const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
-const webpackBaseConfig = require('./webpack.base.config.js')
+const webpackBaseConfig = require('./webpack.site.base.config.js')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
