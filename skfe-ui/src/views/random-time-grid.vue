@@ -16,7 +16,7 @@
 </template>
 
 <script>
-    import TimeGrid from '../../src/components/time-grid.vue'
+    import TimeGrid from '../components/time-grid.vue'
     import moment from 'moment'
 
     export default {

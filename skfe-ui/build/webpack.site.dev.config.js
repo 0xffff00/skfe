@@ -1,10 +1,12 @@
+// ---- Static File of SkFE Archetype v0.1 ----
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
-const webpackBaseConfig = require('./webpack.eg.base.config.js')
+const webpackBaseConfig = require('./webpack.site.base.config.js')
 
+const appBuildConf = require('./app.build.conf')
 module.exports = merge(webpackBaseConfig, {
   // devtool: '#source-map',
   devtool: '#cheap-module-eval-source-map',
@@ -14,7 +16,7 @@ module.exports = merge(webpackBaseConfig, {
   devServer: {
     publicPath: '/',
     host: '0.0.0.0',
-    port: 8917,
+    port: appBuildConf.port || 8900,
     historyApiFallback: true,
     inline: true
   },
@@ -24,8 +26,8 @@ module.exports = merge(webpackBaseConfig, {
       'process.ENV0': JSON.stringify(process.env)
     }),
     new HtmlWebpackPlugin({
-      filename: path.join(__dirname, '../dist/eg/index.html'),
-      template: path.join(__dirname, '../examples/index.html'),
+      filename: 'index.html',
+      template: 'src/index.html',
       inject: true
     }),
     new FriendlyErrorsPlugin()

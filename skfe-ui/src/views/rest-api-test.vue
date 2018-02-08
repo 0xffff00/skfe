@@ -6,7 +6,7 @@
     </div>
 </template>
 <script>
-  import RestApi from '../../src/libs/sk-rest-api'
+  import RestApi from '../libs/sk-rest-api'
 
   export default {
     data: () => ({

@@ -1,8 +1,10 @@
+// ---- Static File of SkFE Archetype v0.1 ----
 const webpack = require('webpack')
 const path = require('path')
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const rules = require('./rules.config.js')
+const app = require('./app.build.conf')
 module.exports = {
   module: {
     rules: rules
@@ -19,8 +21,8 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../dist'),
     publicPath: '/dist/',
-    filename: 'skfe-ui.js',
-    library: 'skfe-ui',
+    filename: app.name + '.js',
+    library: app.name,
     libraryTarget: 'umd',
     umdNamedDefine: true
   },

@@ -1,3 +1,4 @@
+// ---- Static File of SkFE Archetype v0.1 ----
 const path = require('path')
 const webpack = require('webpack')
 const rules = require('./rules.config.js')
@@ -14,19 +15,31 @@ module.exports = {
   },
   // 入口
   entry: {
-    main: path.join(__dirname, '../examples/main'),
-    vue2: ['vue', 'vue-router']
+    main: './src/main',
+    comm1: ['axios', 'ramda', 'moment'],
+    vue2: ['vue', 'vue-router'],
+    ivu2: ['iview']
   },
   // 输出
   output: {
-    path: path.join(__dirname, '../dist/eg'),
+    path: path.join(__dirname, '../dist'),
     filename: '[name].js',
     chunkFilename: '[name].chunk.js',
     publicPath: '/'
   },
   plugins: [
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'skfe', chunks: ['main'], minChunks: Infinity
+    // }),
+    //
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'vue2', chunks: ['main']
+      names: ['comm1'], chunks: ['main', 'vue2', 'ivu2']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'ivu2', chunks: ['main']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vue2', chunks: ['ivu2']
     }),
 
     new ExtractTextPlugin({

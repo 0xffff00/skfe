@@ -10,13 +10,13 @@
   ],
   "scripts": {
     "init": "webpack --progress --config build/webpack.dev.config.js",
-    "s-dd": "webpack-dev-server --content-base ./ --inline --hot --compress --config build/webpack.site.dev.config.js",
-    "s-bd": "webpack --progress --hide-modules --config build/webpack.site.dev.config.js",
-    "s-bp": "webpack --progress --hide-modules --config build/webpack.site.prod.config.js",
+    "lint": "eslint --fix --ext .js,.vue src",
+    "sdd": "webpack-dev-server --content-base ./ --inline --hot --compress --config build/webpack.site.dev.config.js",
+    "sbd": "webpack --progress --hide-modules --config build/webpack.site.dev.config.js",
+    "sbp": "webpack --progress --hide-modules --config build/webpack.site.prod.config.js",
     "bd": "webpack --progress --hide-modules --config build/webpack.dist.dev.config.js",
     "bp": "webpack --progress --hide-modules --config build/webpack.dist.prod.config.js",
-    "ppp": "npm run bd && npm run bp && npm version patch && npm publish",
-    "lint": "eslint --fix --ext .js,.vue src"
+    "b2pp": "npm run bd && npm run bp && npm version patch && npm publish"
   },
   "repository": {
     "type": "git",

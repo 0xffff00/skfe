@@ -1,3 +1,4 @@
+// ---- SkFE Project Archetype v0.1 ----
 import { clone } from 'ramda'
 
 let conf = {}
