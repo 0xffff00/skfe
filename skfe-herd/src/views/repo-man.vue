@@ -75,6 +75,11 @@
               sortable: true
             },
             {
+              key: 'url',
+              title: '映射URL',
+              sortable: true
+            },
+            {
               key: 'state',
               title: '状态',
               sk2template: 'state'
