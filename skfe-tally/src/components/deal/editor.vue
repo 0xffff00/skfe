@@ -5,12 +5,12 @@
                 <td>
                     <slot name="input-buyer">
                         致(收货方)：
-                        <Input size="small" v-model="bill.mainBuyer"></Input>
+                        <Input size="small" v-model="mainBuyer"></Input>
                         结算日期：
-                        <DatePicker size="small" type="date" placeholder="开始日期" :value="bill.startDate"
+                        <DatePicker size="small" type="date" placeholder="开始日期" :value="startDate"
                                     @on-change="onChangeStartDate"></DatePicker>
                         至
-                        <DatePicker size="small" type="date" placeholder="结束日期" :value="bill.endDate"
+                        <DatePicker size="small" type="date" placeholder="结束日期" :value="endDate"
                                     @on-change="onChangeEndDate"></DatePicker>
                     </slot>
                 </td>
@@ -23,15 +23,15 @@
                 <th>#</th>
                 <th>日期</th>
                 <th>账务摘要</th>
-                <th>单价(CNY/KG)</th>
-                <th>重量(KG)</th>
+                <th>单价</th>
+                <th>数量</th>
                 <th>借方(CNY)</th>
                 <th>贷方(CNY)</th>
                 <th>余额(CNY)</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(deal,i) in bill.deals">
+            <tr v-for="(deal,i) in deals">
                 <td :style="{textAlign: 'center'}">{{i}}</td>
                 <td v-for="(c,j) in colDefs" :class="colDefs[j].css1">
                     <Cell :name="c.name" :type="c.type" :val="valOfColDefs[j]"
@@ -92,7 +92,10 @@
       }
     }),
     props: {
-      bill: {type: Object, default: {}},
+      mainBuyer: {type: String, default: null},
+      deals: {type: Array, default: []},
+      startDate: {type: String, default: null},
+      endDate: {type: String, default: null},
       allBuyers: {type: Array, default: []}
     },
     computed: {
@@ -104,7 +107,7 @@
         ]
       },
       balances () {
-        const arr = this.bill.deals.map(d => d.amount || 0)
+        const arr = this.deals.map(d => d.amount || 0)
         let last = arr[0]
         let res = [last]
         for (let i = 1; i < arr.length; i++) {
@@ -114,11 +117,11 @@
         return res
       },
       endDateOfRowZ () {
-        return moment(this.bill.endDate).format('YYYY-MM-DD')
+        return moment(this.endDate).format('YYYY-MM-DD')
       },
       rowZ () {
-        if (!this.bill.deals || !this.bill.deals.length) return {}
-        let res = this.bill.deals
+        if (!this.deals || !this.deals.length) return {}
+        let res = this.deals
           .map(d => ({volume: d.volume || 0, amount: d.amount || 0}))
           .map(d => ({
             volume: d.volume,
@@ -131,7 +134,7 @@
             lend: s.lend + a.lend
           }), {volume: 0, borrow: 0, lend: 0})
         return {
-          date: this.bill.endDate,
+          date: this.endDate,
           desc: '总计',
           borrow: fmtCNY(res.borrow),
           lend: fmtCNY(res.lend),
@@ -147,18 +150,18 @@
     },
     methods: {
       isLegal (i, j) {
-        return i !== null && i >= 0 && i < this.bill.deals.length && j >= 0 && j < this.colDefs.length
+        return i !== null && i >= 0 && i < this.deals.length && j >= 0 && j < this.colDefs.length
       },
       getVal (i, j) {
         let t = this.colDefs[j].type
         let n = this.colDefs[j].name
         let v = null
         if (n === 'borrow') {
-          v = -this.bill.deals[i]['amount']
+          v = -this.deals[i]['amount']
         } else if (n === 'lend') {
-          v = this.bill.deals[i]['amount']
+          v = this.deals[i]['amount']
         } else {
-          v = this.bill.deals[i][n]
+          v = this.deals[i][n]
         }
         return v
       },
@@ -172,17 +175,17 @@
           }
         }
         if (n === 'borrow') {
-          this.bill.deals[i]['amount'] = -v
+          this.deals[i]['amount'] = -v
           return
         }
         if (n === 'lend') {
-          this.bill.deals[i]['amount'] = v
+          this.deals[i]['amount'] = v
           return
         }
-        this.bill.deals[i][n] = v
+        this.deals[i][n] = v
       },
       jumpToCell (i, j, editing) {
-        if (i === this.bill.deals.length) {
+        if (i === this.deals.length) {
           this.insertRow(i - 1)
         }
         if (!this.isLegal(i, j)) return
@@ -211,7 +214,7 @@
         this.setVal(this.curr.i, this.curr.j, this.curr.val)
         // auto calc lend = price x volume
         if (colName === 'price' || colName === 'volume') {
-          let row = this.bill.deals[this.curr.i]
+          let row = this.deals[this.curr.i]
           if (row.price && row.volume) {
             row.amount = row.price * row.volume
           }
@@ -228,10 +231,10 @@
         this.curr = clone(defaultCurr)
       },
       insertRow (i) {
-        this.bill.deals.splice(i + 1, 0, clone(defaultRow))
+        this.deals.splice(i + 1, 0, clone(defaultRow))
       },
       deleteRow (i) {
-        this.bill.deals.splice(i, 1)
+        this.deals.splice(i, 1)
       },
       onFilterBuyersHints (q) {
         const vm = this
@@ -297,10 +300,10 @@
         }
       },
       onChangeStartDate (v) {
-        this.bill.startDate = v
+        this.startDate = v
       },
       onChangeEndDate (v) {
-        this.bill.endDate = v
+        this.endDate = v
       }
     }
   }

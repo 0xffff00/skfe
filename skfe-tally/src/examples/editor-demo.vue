@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import BillEditor from '../components/bill/editor.vue'
+  import BillEditor from '../components/deal/editor.vue'
 
   export default {
     components: {BillEditor},

@@ -27,7 +27,7 @@
 </template>
 <script>
   import TallyApi from '../apis/TallyApi'
-  import { fmtCNY } from '../components/bill/util'
+  import { fmtCNY } from '../components/deal/util'
 
   export default {
     data: () => ({

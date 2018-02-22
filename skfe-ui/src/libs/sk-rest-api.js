@@ -147,4 +147,4 @@ function toQVarStr (params) {
  * @param singularPart {function|string}, build a url made by primary key columns.
  */
 const of = (pluralUrl, singularPart = '') => new SkeanRestApi(pluralUrl, singularPart)
-export default {of}
+export default {of, respond, toQVarStr}

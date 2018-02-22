@@ -59,16 +59,7 @@
             </table>
 
         </div>
-        <Modal title="请选择一个客户" v-model="selectBuyerModal" closable>
-            <h4>输入新客户名：</h4>
-            <Input v-model="bill.mainBuyer"></Input>
-            <h4>或选择一个已存在的客户：</h4>
-            <div>
-                <Button size="small" v-for="b in allBuyers" :key="b.hanzi" @click="selectBuyer(b.hanzi)">
-                    {{b.hanzi}}
-                </Button>
-            </div>
-        </Modal>
+
     </div>
 
 </template>
@@ -76,16 +67,18 @@
 <script>
   import CONFIG from '../conf'
   import { merge, clone } from 'ramda'
-  import Editor from '../components/bill/editor.vue'
+  import Editor from '../components/deal/editor.vue'
   import TallyApi from '../apis/TallyApi'
-  import { defaultRow, defaultBill, today, isoDate2cn } from '../components/bill/util'
+  import { defaultRow, defaultBill, today, isoDate2cn } from '../components/deal/util'
   import { MsgBox } from 'skfe-ui'
 
   export default {
     components: {Editor},
     data: () => ({
-      bill: clone(defaultBill),
-      billId: null,
+      buyer: null,
+      startDate:null,
+      endDate:null,
+      deals:[defaultRow],
       allBuyers: [],
       selectBuyerModal: false
     }),
@@ -137,10 +130,10 @@
       saveMe () {
         const self = this
         // fill bill props
-        self.bill.id = self.billId ? self.billId : Date.now()
-        self.bill.baseBalance = self.bill.deals[0].amount
-        self.bill.finalBalance = self.bill.deals.map(d => d.amount).reduce((s, a) => s + a, 0)
-        TallyApi.bills.putting({id: self.bill.id}, self.bill)(resp2 => {
+        // self.bill.baseBalance = self.bill.deals[0].amount
+        // self.bill.finalBalance = self.bill.deals.map(d => d.amount).reduce((s, a) => s + a, 0)
+        let params = {dateMin: self.bill.startDate, dateMax: self.bill.endDate, buyer: self.bill.mainBuyer}
+        TallyApi.deals.batchPut(params, self.bill.deals)(resp2 => {
           MsgBox.open(self, '保存账单')(resp2)
           if (resp2.ok) {
             // self.billId = self.bill.id
@@ -157,7 +150,7 @@
       selectBuyer (buyer) {
         const vm = this
         this.bill.mainBuyer = buyer
-        TallyApi.bills.gettingSome({mainBuyer: buyer, o: '-id', l: 1})(resp2 => {
+        TallyApi.deals.gettingSome({mainBuyer: buyer, o: '-id', l: 1})(resp2 => {
           if (resp2.data && resp2.data.length) {
             let lastBill = resp2.data[0]
             // vm.bill.baseBalance = lastBill.finalBalance

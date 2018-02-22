@@ -23,10 +23,10 @@
                                 所有客户
                             </MenuItem>
                         </router-link>
-                        <router-link to="/bills/manage">
+                        <router-link to="/deals/view">
                             <MenuItem name="as">
                                 <Icon type="soup-can"></Icon>
-                                管理
+                                明细查阅
                             </MenuItem>
                         </router-link>
                         <Submenu name="3">
