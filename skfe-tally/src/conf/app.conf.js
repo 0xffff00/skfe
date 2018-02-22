@@ -1,4 +1,5 @@
 window.ENV0 = {
+  'projectTitle': 'Skean Tally',
   'tallyApiUrl': 'http://localhost:8940',
   'sellerInfo': {
     'id': 'fduzj',

@@ -1,3 +1,4 @@
+// ---- Static File of SkFE Archetype v0.1 ----
 const path = require('path')
 const webpack = require('webpack')
 const rules = require('./rules.config.js')
