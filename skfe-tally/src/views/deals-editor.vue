@@ -1,6 +1,12 @@
 <template>
     <div>
+        <div class="opt-pane">
+            <Button type="primary" @click="saveMe">保存</Button>
+            <Button type="warning" @click="printMe">打印</Button>
+        </div>
         <div class="bill-head">
+            {{buyer}}
+
             <BuyerSelect v-model="buyer" :allBuyers="allBuyers"></BuyerSelect>
 
             <DatePicker size="small" type="date" placeholder="开始日期" :value="startDate"
@@ -21,18 +27,19 @@
 <script>
   import CONFIG from '../conf'
   import { merge, clone } from 'ramda'
+  import BuyerSelect from '../components/buyer-select.vue'
   import Editor from '../components/deal/editor.vue'
   import TallyApi from '../apis/TallyApi'
-  import { defaultRow, today, isoDate2cn } from '../components/deal/util'
+  import { defaultRow, today, toD2000 } from '../components/deal/util'
   import { MsgBox } from 'skfe-ui'
 
   export default {
-    components: {Editor},
+    components: {Editor, BuyerSelect},
     data: () => ({
       buyer: null,
       startDate: null,
       endDate: today(),
-      deals: [],
+      deals: [defaultRow],
       allBuyers: []
     }),
     computed: {
@@ -60,17 +67,52 @@
       })
     },
     methods: {
-      isoDate2cn: isoDate2cn,
-      reload () {
-        const self = this
-        if (this.billId) {
-          TallyApi.bills.getting({id: this.billId})(resp2 => {
-            self.bill = resp2.data
-          })
-        } else {
-          self.endDate = today()
-        }
+      reloadMe () {
+        const vm = this
+        const params = {buyer: vm.buyer, date_GE: vm.startDate, date_LE: vm.endDate}
+        TallyApi.deals.gettingSome(params)(resp2 => {
+          vm.deals = resp2.data
+        })
       },
+      saveMe () {
+        const vm = this
+        if (!vm.buyer) {
+          vm.$Message.error('客户名不能为空')
+          return
+        }
+        if (!vm.startDate) {
+          vm.$Message.error('开始日期不能为空')
+          return
+        }
+        let params = {dateMin: vm.startDate, dateMax: vm.endDate, buyer: vm.buyer}
+        // generate id for deals: id=daysSince1970(date)+'001'
+        let date0 = vm.startDate
+        let x = 0 // index of same date0
+        for (let i = 0; i < vm.deals.length; i++) {
+          let d = vm.deals[i]
+          d.buyer = vm.buyer
+          let date1 = vm.date || date0
+          if (date1 === date0) x++
+          else date0 = date1
+          vm.id = toD2000(date1) * 1000 + x
+        }
+        vm.deals.forEach(d => {
+          d.buyer = vm.buyer
+
+          d.id = d.date
+        })
+        TallyApi.deals.batchPut(params, vm.deals)(resp2 => {
+          MsgBox.open(self, '保存账单')(resp2)
+          vm.reloadMe()
+        })
+      },
+      printMe () {
+        let p = this.$route.path
+        window.history.pushState(null, null, 'xxxx')
+        this.saveMe()
+        window.print()
+      },
+
       onChangeStartDate (v) {
         this.startDate = v
       },
@@ -134,7 +176,7 @@
     }
 
     .opt-pane {
-        position: fixed;
+        /*position: fixed;*/
         right: 8px;
         top: 8px;
     }

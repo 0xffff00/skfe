@@ -28,19 +28,13 @@ const defaultRow = {
 }
 const defaultKeyRow = merge(defaultRow, {desc: '上次结欠', type: 'KEY'})
 const defaultCurr = {i: null, j: null, editing: false, focus2: true}
-const defaultBill = {
-  id: null,
-  mainSeller: 'DDSSP',
-  mainBuyer: '',
-  startDate: null,
-  endDate: null,
-  baseBalance: 0,
-  finalBalance: 0,
-  memo: null,
-  deals: [clone(defaultKeyRow), clone(defaultRow)]
-}
+
 const today = () => moment().format('YYYY-MM-DD')
+
+const FIRST_DAY_OF_2000 = moment([2000, 1, 1])
+// differ days since 2000-1-1
+const toD2000 = dateStr => moment(dateStr).diff(FIRST_DAY_OF_2000, 'days')
 
 const isoDate2cn = s => moment(s).format('YYYY年MM月DD日')
 
-export { fmtCNY, fmtDefault, defaultRow, defaultKeyRow, defaultCurr, defaultBill, today, isoDate2cn }
+export { fmtCNY, fmtDefault, defaultRow, defaultKeyRow, defaultCurr, today, isoDate2cn, toD2000 }

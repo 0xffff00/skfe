@@ -2,7 +2,7 @@ import EditorDemo from './examples/editor-demo.vue'
 import Hello1 from './examples/hello1.vue'
 import BillEditor from './views/basic-editor.vue'
 import BillMan from './views/bill-man.vue'
-import DealsView from './views/deals-view.vue'
+import DealsEditor from './views/deals-editor.vue'
 
 const routes = [
   {
@@ -28,9 +28,9 @@ const routes = [
     component: BillMan
   },
   {
-    name: 'DealsView',
-    path: '/deals/view',
-    component: DealsView
+    name: 'DealsEditor',
+    path: '/deals',
+    component: DealsEditor
   }
 ]
 export default routes

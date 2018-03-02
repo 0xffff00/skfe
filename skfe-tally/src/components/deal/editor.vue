@@ -1,23 +1,6 @@
 <template>
     <div>
-        <table class="head-editor" @click="clearCurr">
-            <tr>
-                <td>
-                    <slot name="input-buyer">
-                        致(收货方)：
-                        <Input size="small" v-model="mainBuyer"></Input>
-                        结算日期：
-                        <DatePicker size="small" type="date" placeholder="开始日期" :value="startDate"
-                                    @on-change="onChangeStartDate"></DatePicker>
-                        至
-                        <DatePicker size="small" type="date" placeholder="结束日期" :value="endDate"
-                                    @on-change="onChangeEndDate"></DatePicker>
-                    </slot>
-                </td>
-            </tr>
-        </table>
-
-        <table class="main">
+       <table class="main">
             <thead>
             <tr>
                 <th>#</th>
@@ -92,11 +75,11 @@
       }
     }),
     props: {
-      mainBuyer: {type: String, default: null},
+      buyer: {type: String, default: null},
       deals: {type: Array, default: []},
       startDate: {type: String, default: null},
       endDate: {type: String, default: null},
-      allBuyers: {type: Array, default: []}
+      editable: {type: Boolean, default: true}
     },
     computed: {
       valOfColDefs () {
@@ -236,14 +219,14 @@
       deleteRow (i) {
         this.deals.splice(i, 1)
       },
-      onFilterBuyersHints (q) {
+      /* onFilterBuyersHints (q) {
         const vm = this
         vm.opts.buyers = vm.allBuyers.filter(b => {
           if (!q) return true
           let k = q.toUpperCase()
           return b.hanzi.includes(k) || b.py1.includes(k) || b.py2.includes(k)
         })
-      },
+      }, */
       onKeyPress (evt) {
         const k = evt.key
         // console.log(evt)

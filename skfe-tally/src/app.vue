@@ -23,7 +23,7 @@
                                 所有客户
                             </MenuItem>
                         </router-link>
-                        <router-link to="/deals/view">
+                        <router-link to="/deals">
                             <MenuItem name="as">
                                 <Icon type="soup-can"></Icon>
                                 明细查阅
