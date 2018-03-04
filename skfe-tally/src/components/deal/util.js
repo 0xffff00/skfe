@@ -19,19 +19,23 @@ const fmtCNY = (num) => {
   return res
 }
 const defaultRow = {
+  buyer: null,
+  seller: null,
+  sn: null,
   date: null,
   desc: null,
   price: null,
   volume: null,
+  unit: 'KG',
   amount: null,
   type: null
 }
-const defaultKeyRow = merge(defaultRow, {desc: '上次结欠', type: 'KEY'})
+const defaultKeyRow = merge(defaultRow, {desc: '上次欠款余额', type: 'KEY', unit: null})
 const defaultCurr = {i: null, j: null, editing: false, focus2: true}
 
 const today = () => moment().format('YYYY-MM-DD')
 
-const FIRST_DAY_OF_2000 = moment([2000, 1, 1])
+const FIRST_DAY_OF_2000 = moment('2000-01-01')
 // differ days since 2000-1-1
 const toD2000 = dateStr => moment(dateStr).diff(FIRST_DAY_OF_2000, 'days')
 

@@ -5,19 +5,20 @@
             <Button type="warning" @click="printMe">打印</Button>
         </div>
         <div class="bill-head">
-            {{buyer}}
-
-            <BuyerSelect v-model="buyer" :allBuyers="allBuyers"></BuyerSelect>
+            <BuyerSelect v-model="buyer" :allBuyers="allBuyers" :selectTick="buyerSelectTick"></BuyerSelect>
 
             <DatePicker size="small" type="date" placeholder="开始日期" :value="startDate"
-                        @on-change="onChangeStartDate"></DatePicker>
+                        @on-change="resetStartDate"></DatePicker>
             至
             <DatePicker size="small" type="date" placeholder="结束日期" :value="endDate"
-                        @on-change="onChangeEndDate"></DatePicker>
+                        @on-change="resetEndDate"></DatePicker>
+
+            <Button type="primary" @click="reloadMe">查询</Button>
 
         </div>
         <div class="bill-main">
-            <Editor :deals="deals" :allBuyers="allBuyers" :startDate="startDate" :endDate="endDate">
+            <Editor :deals="deals" :allBuyers="allBuyers" :startDate="startDate" :endDate="endDate"
+                    :initBalance="initBalance">
             </Editor>
         </div>
     </div>
@@ -27,6 +28,7 @@
 <script>
   import CONFIG from '../conf'
   import { merge, clone } from 'ramda'
+  import moment from 'moment'
   import BuyerSelect from '../components/buyer-select.vue'
   import Editor from '../components/deal/editor.vue'
   import TallyApi from '../apis/TallyApi'
@@ -37,10 +39,13 @@
     components: {Editor, BuyerSelect},
     data: () => ({
       buyer: null,
+      seller: CONFIG.sellerInfo.id,
       startDate: null,
-      endDate: today(),
+      endDate: null,
       deals: [defaultRow],
-      allBuyers: []
+      initBalance: 0,
+      allBuyers: [],
+      buyerSelectTick: 0
     }),
     computed: {
       sellerInfo () {
@@ -48,12 +53,21 @@
       }
     },
     props: {},
-    watch: {},
+    watch: {
+      buyer () {
+        this.$router.push({params: {buyer: this.buyer}})
+        this.reloadMe()
+      },
+      $route () {
+        // this.buyer = this.$route.params.buyer
+      }
+    },
     created () {
       const vm = this
-      let params = this.$route.params
-      this.billId = parseInt(params.billId)
-
+      let $rp = vm.$route.params
+      vm.buyer = $rp.buyer
+      vm.startDate = moment().date(1).format('YYYY-MM-DD')
+      vm.endDate = moment().date(1).add(1, 'M').subtract(1, 'd').format('YYYY-MM-DD')
       TallyApi.deals.allBuyers(resp2 => {
         if (resp2.data) {
           let arr = resp2.data
@@ -63,15 +77,31 @@
             arr[i].py1 = pys.map(s => s[0]).join('')
           }
           vm.allBuyers = arr
+          if (vm.buyer === 'NA') {
+            vm.buyerSelectTick++
+          }
         }
       })
+      vm.reloadMe()
     },
     methods: {
       reloadMe () {
         const vm = this
-        const params = {buyer: vm.buyer, date_GE: vm.startDate, date_LE: vm.endDate}
-        TallyApi.deals.gettingSome(params)(resp2 => {
+        TallyApi.deals.getBalance({
+          buyer: vm.buyer,
+          seller: vm.seller,
+          snMax: toD2000(vm.startDate) * 1000 - 1
+        })(resp2 => {
+          vm.initBalance = resp2.data
+        })
+        TallyApi.deals.gettingSome({
+          buyer: vm.buyer,
+          seller: vm.seller,
+          sn_GE: toD2000(vm.startDate) * 1000,
+          sn_LE: toD2000(vm.endDate) * 1000 + 999
+        })(resp2 => {
           vm.deals = resp2.data
+          if (!vm.deals.length) vm.deals = [defaultRow]
         })
       },
       saveMe () {
@@ -84,25 +114,30 @@
           vm.$Message.error('开始日期不能为空')
           return
         }
-        let params = {dateMin: vm.startDate, dateMax: vm.endDate, buyer: vm.buyer}
+        if (!vm.endDate) {
+          vm.$Message.error('结束日期不能为空')
+          return
+        }
+        let params = {
+          buyer: vm.buyer,
+          seller: vm.seller,
+          snMin: toD2000(vm.startDate) * 1000,
+          snMax: toD2000(vm.endDate) * 1000 + 999
+        }
         // generate id for deals: id=daysSince1970(date)+'001'
         let date0 = vm.startDate
         let x = 0 // index of same date0
         for (let i = 0; i < vm.deals.length; i++) {
           let d = vm.deals[i]
           d.buyer = vm.buyer
-          let date1 = vm.date || date0
+          d.seller = vm.seller
+          let date1 = d.date || date0
           if (date1 === date0) x++
           else date0 = date1
-          vm.id = toD2000(date1) * 1000 + x
+          d.sn = toD2000(date1) * 1000 + x
         }
-        vm.deals.forEach(d => {
-          d.buyer = vm.buyer
-
-          d.id = d.date
-        })
-        TallyApi.deals.batchPut(params, vm.deals)(resp2 => {
-          MsgBox.open(self, '保存账单')(resp2)
+        TallyApi.deals.batchSave(params, vm.deals)(resp2 => {
+          MsgBox.open(vm, '保存账单')(resp2)
           vm.reloadMe()
         })
       },
@@ -112,12 +147,13 @@
         this.saveMe()
         window.print()
       },
-
-      onChangeStartDate (v) {
-        this.startDate = v
+      resetStartDate (v) {
+        if (v) this.startDate = v
+        this.reloadMe()
       },
-      onChangeEndDate (v) {
-        this.endDate = v
+      resetEndDate (v) {
+        if (v) this.endDate = v
+        this.reloadMe()
       }
     }
   }

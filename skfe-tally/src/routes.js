@@ -1,7 +1,6 @@
 import EditorDemo from './examples/editor-demo.vue'
 import Hello1 from './examples/hello1.vue'
 import BillEditor from './views/basic-editor.vue'
-import BillMan from './views/bill-man.vue'
 import DealsEditor from './views/deals-editor.vue'
 
 const routes = [
@@ -14,22 +13,10 @@ const routes = [
     path: '/eg/editor-demo',
     component: EditorDemo,
   },
-  {
-    name: 'BillEditor',
-    path: '/bills/:billId/edit',
-    component: BillEditor,
-    meta: {
-      noMenu111: true
-    }
-  },
-  {
-    name: 'BillMan',
-    path: '/bills/manage',
-    component: BillMan
-  },
+
   {
     name: 'DealsEditor',
-    path: '/deals',
+    path: '/buyers/:buyer/deals',
     component: DealsEditor
   }
 ]

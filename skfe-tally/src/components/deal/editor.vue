@@ -1,6 +1,6 @@
 <template>
     <div>
-       <table class="main">
+        <table class="main">
             <thead>
             <tr>
                 <th>#</th>
@@ -8,13 +8,14 @@
                 <th>账务摘要</th>
                 <th>单价</th>
                 <th>数量</th>
+                <th>单位</th>
                 <th>借方(CNY)</th>
                 <th>贷方(CNY)</th>
                 <th>余额(CNY)</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(deal,i) in deals">
+            <tr v-for="(deal,i) in deals" :class="{keyRow : deal.type === 'KEY'}">
                 <td :style="{textAlign: 'center'}">{{i}}</td>
                 <td v-for="(c,j) in colDefs" :class="colDefs[j].css1">
                     <Cell :name="c.name" :type="c.type" :val="valOfColDefs[j]"
@@ -23,7 +24,10 @@
                 </td>
                 <td class="opt">
                     <div>
-                        <a @click="insertRow(i)" title="插入一行，紧随其后">
+                        <a @click="insertKeyRow(i)" title="插入基准行，紧随其后">
+                            <Icon type="plus-circled" color="#225530"></Icon>
+                        </a>
+                        <a @click="insertPlainRow(i)" title="插入普通行，紧随其后">
                             <Icon type="plus-circled" color="green"></Icon>
                         </a>
                         <a @click="deleteRow(i)" title="删除此行">
@@ -40,6 +44,7 @@
                 <th>{{rowZ.desc}}</th>
                 <th></th>
                 <th>{{rowZ.volume}}</th>
+                <th></th>
                 <th class="cny">{{rowZ.borrow}}</th>
                 <th class="cny">{{rowZ.lend}}</th>
                 <th class="cny">{{rowZ.balance}}</th>
@@ -53,7 +58,7 @@
   import { merge, clone } from 'ramda'
   import moment from 'moment'
   import Cell from './cell.vue'
-  import { fmtCNY, fmtDefault, defaultRow, defaultCurr, today, isoDate2cn } from './util'
+  import { fmtCNY, fmtDefault, defaultRow, defaultKeyRow, defaultCurr, today, isoDate2cn } from './util'
 
   export default {
     components: {Cell},
@@ -65,6 +70,7 @@
         {name: 'desc', type: 'txt', css1: 'desc'},
         {name: 'price', type: 'CNY', css1: 'cny'},
         {name: 'volume', type: 'num', css1: 'volume'},
+        {name: 'unit', type: 'txt', css1: 'unit'},
         {name: 'borrow', type: 'CNY', css1: 'cny'},
         {name: 'lend', type: 'CNY', css1: 'cny'},
         {name: 'balance', type: 'CNY', css1: 'cny', editable: false}
@@ -79,22 +85,24 @@
       deals: {type: Array, default: []},
       startDate: {type: String, default: null},
       endDate: {type: String, default: null},
-      editable: {type: Boolean, default: true}
+      editable: {type: Boolean, default: true},
+      initBalance: {type: Number, default: 0}
     },
     computed: {
       valOfColDefs () {
-        return [null, null, null, null,
-          (row, i) => row.amount < 0 ? -row.amount : null,
-          (row, i) => row.amount > 0 ? row.amount : null,
+        return [null, null, null, null, null,
+          (row, i) => row.amount < 0 && row.type !== 'KEY' ? -row.amount : null,
+          (row, i) => row.amount > 0 && row.type !== 'KEY' ? row.amount : null,
           (row, i) => this.balances[i]
         ]
       },
       balances () {
-        const arr = this.deals.map(d => d.amount || 0)
-        let last = arr[0]
-        let res = [last]
-        for (let i = 1; i < arr.length; i++) {
-          last += arr[i]
+        let last = this.initBalance
+        let res = []
+        for (let i = 0; i < this.deals.length; i++) {
+          let v = this.deals[i].amount || 0
+          if (this.deals[i].type === 'KEY') last = v
+          else last += v
           res.push(last)
         }
         return res
@@ -169,7 +177,7 @@
       },
       jumpToCell (i, j, editing) {
         if (i === this.deals.length) {
-          this.insertRow(i - 1)
+          this.insertPlainRow(i - 1)
         }
         if (!this.isLegal(i, j)) return
         if (this.curr.i === i && this.curr.j === j) {
@@ -213,7 +221,10 @@
         this.finishEditCurrCell()
         this.curr = clone(defaultCurr)
       },
-      insertRow (i) {
+      insertKeyRow (i) {
+        this.deals.splice(i + 1, 0, clone(defaultKeyRow))
+      },
+      insertPlainRow (i) {
         this.deals.splice(i + 1, 0, clone(defaultRow))
       },
       deleteRow (i) {
@@ -338,8 +349,13 @@
         th {
             border: solid 1px black;
         }
+        tr {
+
+        }
         td {
             border: solid 1px black;
+            border-bottom: none;
+            /*border: solid 1px black;*/
         }
         td.opt {
             border-width: 0;
@@ -363,8 +379,11 @@
 
     @media screen {
         table.main {
+            tr.keyRow {
+                border-top: ridge 3px black;
+            }
             td.opt {
-                width: 30px;
+                width: 45px;
                 display: block;
             }
             td.date {
@@ -377,6 +396,9 @@
             }
             td.volume {
                 width: 70px;
+            }
+            td.unit {
+                max-width: 30px;
             }
             td.cny {
                 width: 120px;
@@ -392,6 +414,9 @@
         table.main {
             color: black;
             border-color: black;
+            tr.keyRow {
+                border-top: ridge 3px black;
+            }
             td.opt {
                 display: none;
             }
@@ -404,6 +429,9 @@
             }
             td.volume {
                 max-width: 70px;
+            }
+            td.unit {
+                max-width: 30px;
             }
             td.cny {
                 min-width: 80px;
